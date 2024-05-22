@@ -1,16 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/22 15:44:54 by rgreiner         ###   ########.fr       */
+/*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
+/*   Updated: 2024/05/22 15:49:37 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+
+#ifndef SERVER_HPP
+# define SERVER_HPP
+#endif
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <iostream>
@@ -25,15 +28,24 @@
 #include <fcntl.h>
 #include<cstring>
 #include<vector>
+#include"Client.hpp"
+#include <csignal>
 
-class Client
+class Server
 {
-protected:
+    private:
+        
+        sockaddr_in serverAddr;
+        nfds_t nfds;
+        std::vector<pollfd> fds;
+        std::vector<Client> clients;
+    public:
+        int serverSocket;
+        Server(/* args */);
+        Server(char **argv);
+        ~Server();
 
-public:
-    Client(/* args */);
-    ~Client();
-    int clientSocket;
-    sockaddr_in clientAddr;
-    socklen_t addr_len;
+        void routine();
 };
+
+Server server;
