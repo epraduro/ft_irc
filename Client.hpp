@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/22 15:44:54 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:54:47 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ public:
     Client(/* args */);
     ~Client();
     int clientSocket;
+    int isConnected;
     sockaddr_in clientAddr;
     socklen_t addr_len;
+    void    connectClient(std::string buf);
 };

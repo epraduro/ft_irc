@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/22 15:49:37 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/23 15:48:04 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server
         nfds_t nfds;
         std::vector<pollfd> fds;
         std::vector<Client> clients;
+        std::string     PASS;
     public:
         int serverSocket;
         Server(/* args */);

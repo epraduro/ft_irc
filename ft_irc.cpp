@@ -5,6 +5,8 @@
 
 Server::Server(char **argv)
 {
+	PASS = argv[2];
+	std::cout << "Pas" << PASS << std::endl;
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
 		std::cout << "coucou5" << std::endl;
@@ -43,8 +45,7 @@ void	Server::routine()
 {
 	int pollret;
 	pollfd tmp;
-	char buf[128];
-
+	std::vector<char> buf(100);
 	while(1)
 	{
 		pollret = poll(fds.data(), nfds + 1 ,500);
@@ -66,8 +67,19 @@ void	Server::routine()
 			std::cout << "Poll error" << std::endl;
 		if (nfds >= 1)
 		{
-			if (recv(this->clients[0].clientSocket, buf, sizeof(buf), MSG_DONTWAIT) > 0)
-				std::cout << "Recive : " << buf;
+			for (nfds_t i = 0; i <= nfds; i++)
+			{
+				if (recv(this->clients[i].clientSocket, buf.data(), buf.size(), MSG_DONTWAIT) > 0)
+				{
+					if (clients[i].isConnected == 0)
+						clients[i].connectClient(buf.data());
+					else
+						std::cout << "Is connected and recive : " << buf.data() << std::endl;
+					buf.clear();
+					buf.resize(100);
+				}
+					
+			}
 		}
 	}
 }
@@ -83,7 +95,12 @@ void controles(int sig)
 }
 
 int main(int argc, char **argv){
-	(void)argc;
+	
+	if (argc != 3)
+	{
+		std::cout << "Invalid arguments" << std::endl;
+		return (1);
+	}
 	signal(SIGINT, &controles);
 	server = Server(argv);
 	server.routine();
