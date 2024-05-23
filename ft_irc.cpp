@@ -6,7 +6,7 @@
 Server::Server(char **argv)
 {
 	PASS = argv[2];
-	std::cout << "Pas" << PASS << std::endl;
+	std::cout << "Password : " << PASS << std::endl;
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
 		std::cout << "coucou5" << std::endl;
@@ -45,10 +45,9 @@ void	Server::routine()
 {
 	int pollret;
 	pollfd tmp;
-	std::vector<char> buf(100);
 	while(1)
 	{
-		pollret = poll(fds.data(), nfds + 1 ,500);
+		pollret = poll(fds.data(), nfds + 1 , 10);
 			if (fds[0].revents & POLLIN)
 			{
 				clients.push_back(Client());
@@ -67,16 +66,22 @@ void	Server::routine()
 			std::cout << "Poll error" << std::endl;
 		if (nfds >= 1)
 		{
-			for (nfds_t i = 0; i <= nfds; i++)
+			for (nfds_t i = 0; i < nfds; i++)
 			{
-				if (recv(this->clients[i].clientSocket, buf.data(), buf.size(), MSG_DONTWAIT) > 0)
+				if (recv(clients[i].clientSocket, clients[i].buf.data(), clients[i].buf.size(), MSG_DONTWAIT) == 1)
 				{
-					if (clients[i].isConnected == 0)
-						clients[i].connectClient(buf.data());
-					else
-						std::cout << "Is connected and recive : " << buf.data() << std::endl;
-					buf.clear();
-					buf.resize(100);
+					clients[i].finalbuf.push_back(clients[i].buf[0]);
+					if (clients[i].buf[0] == '\n')
+					{
+						if (clients[i].isConnected == 0)
+							clients[i].connectClient(clients[i].finalbuf.data());
+						else
+							std::cout << "Is connected and recive : " << clients[i].finalbuf.data() << std::endl;
+					//	finalbuf.clear();
+						std::vector<char>().swap(clients[i].finalbuf);
+					}
+					clients[i].buf.clear();
+					clients[i].buf.resize(1);
 				}
 					
 			}

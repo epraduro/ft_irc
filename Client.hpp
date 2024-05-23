@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/23 16:54:47 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/23 19:54:38 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@ public:
     int isConnected;
     sockaddr_in clientAddr;
     socklen_t addr_len;
+    std::vector<char> buf;
+	std::vector<char> finalbuf;
     void    connectClient(std::string buf);
 };
