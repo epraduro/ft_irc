@@ -2,15 +2,38 @@
 
 #include "Server.hpp"
 
+void    parse_argv(Server& server, char **argv)
+{
+	int	port;
+
+	port = atoi(argv[1]);
+	if (!isdigit(*argv[1]))
+	{
+		std::cout << "PORT IS NOT NUMERIC" << std::endl;
+		exit(1);
+	}
+	if (port < 0 || port > 65535)
+	{
+		std::cout << "PORT INVALID" << std::endl;
+		exit(1);
+	}
+    server.pass = argv[2];
+    if (server.pass.empty())
+	{
+		std::cout << "ENTRY PASSEWORD" << std::endl;
+		exit(1);
+	}
+}
 
 Server::Server(char **argv)
 {
-	PASS = argv[2];
-	std::cout << "Password : " << PASS << std::endl;
+	///PASS = argv[2];
+	//std::cout << "Password : " << PASS << std::endl;
+	parse_argv(*this, argv);
+	//std::cout << "PASSWORD = " << pass << std::endl;
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
 		std::cout << "coucou5" << std::endl;
-
 	nfds = 0;
 	pollfd tmp;
 	tmp.fd = serverSocket;
@@ -45,6 +68,7 @@ void	Server::routine()
 {
 	int pollret;
 	pollfd tmp;
+	
 	while(1)
 	{
 		pollret = poll(fds.data(), nfds + 1 , 10);
