@@ -5,12 +5,17 @@
 void    parse_argv(Server& server, char **argv)
 {
 	int	port;
+	int i = 0;
 
 	port = atoi(argv[1]);
-	if (!isdigit(*argv[1]))
+	while(argv[1][i])
 	{
-		std::cout << "PORT IS NOT NUMERIC" << std::endl;
-		exit(1);
+		if (!isdigit(argv[1][i]))
+		{
+			std::cout << "PORT IS NOT NUMERIC" << std::endl;
+			exit(1);
+		}
+		i++;
 	}
 	if (port < 0 || port > 65535)
 	{
@@ -27,7 +32,7 @@ void    parse_argv(Server& server, char **argv)
 
 Server::Server(char **argv)
 {
-	///PASS = argv[2];
+	pass = argv[2];
 	//std::cout << "Password : " << PASS << std::endl;
 	parse_argv(*this, argv);
 	//std::cout << "PASSWORD = " << pass << std::endl;
@@ -98,10 +103,9 @@ void	Server::routine()
 					if (clients[i].buf[0] == '\n')
 					{
 						if (clients[i].isConnected == 0)
-							clients[i].connectClient(clients[i].finalbuf.data());
+							clients[i].connectClient(clients[i].finalbuf.data(), pass);
 						else
 							std::cout << "Is connected and recive : " << clients[i].finalbuf.data() << std::endl;
-					//	finalbuf.clear();
 						std::vector<char>().swap(clients[i].finalbuf);
 					}
 					clients[i].buf.clear();
