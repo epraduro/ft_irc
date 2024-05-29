@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/28 15:13:58 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/29 11:42:09 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ public:
     int passwordVerif;
     std::string nickname;
     std::string username;
+    std::string hostname;
+    std::string servername;
+    std::string realname;
     int hasNickname;
     int hasUsername;
     sockaddr_in clientAddr;
