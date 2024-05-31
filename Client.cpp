@@ -6,11 +6,12 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/29 12:37:40 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/31 14:59:34 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"Client.hpp"
+#include"Server.hpp"
 
 Client::Client(/* args */)
 {
@@ -87,9 +88,9 @@ void	Client::newusername(std::vector<std::string> str)
 		hostname = str[2];
 		servername = str[3];
 		if (str.size() == 6)
-			realname = str[4] + ' ' + str[5];
+			realname = str[4].substr(1, str[4].size()) + ' ' + str[5];
 		else
-			realname = str[4];
+			realname = str[4].substr(1, str[4].size());
 		hasUsername = 1;
 		std::cout << "user : " << username << std::endl;
 		std::cout << "host : " << hostname << std::endl;
@@ -102,8 +103,9 @@ void	Client::newusername(std::vector<std::string> str)
 
 }
 
-void	Client::newnickname(std::vector<std::string> str)
+void	Client::newnickname(std::vector<std::string> str, Server server)
 {
+	(void)server;
 	if (str.size() != 2)
 	{
 		send(clientSocket, "NICK :Not enough parameters\n", 28, 0);
@@ -113,9 +115,29 @@ void	Client::newnickname(std::vector<std::string> str)
 	hasNickname = 1;
 }
 
+void	Client::createChannel(std::vector<std::string> str)
+{
+	if (str.size() < 2)
+	{
+		send(clientSocket, "JOIN :Not enough parameters\n", 28, 0);
+		return ;	
+	}
+	if (server.channels.size() >= 1)
+	{
+		for (int i = 0; server.channels[i].channelName.empty(); i++)
+		{
+			if (server.channels[i].channelName == str[1])
+				std::cout << "server name already exist" << std::endl;
+		}
+	}
+	else
+		server.channels.push_back(Channel(str[1]));
+	std::cout << "server name : " << server.channels[0].channelName << std::endl;
+	
+}
+
 void	Client::exec(std::vector<std::string> str)
 {
-	(void)str;
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);
@@ -126,11 +148,12 @@ void	Client::exec(std::vector<std::string> str)
 		send(clientSocket, "No username saved, please input a username by using 'USER <newusername>\n", 72, 0);
 		return ;
 	}
+	if (str[0] == "JOIN")
+		createChannel(str);		
 }
 
-void    Client::connectClient(std::string buf, std::string password)
+void    Client::connectClient(std::string buf, std::string password, Server server)
 {
-	std::cout << "Recive : " << buf << std::endl;
 	std::vector<std::string> str;
 	str = split(buf, ' ');
 	if (str.size() == 3 && str[0] == "CAP" && str[1] == "LS" && str[2] == "302")
@@ -140,7 +163,7 @@ void    Client::connectClient(std::string buf, std::string password)
 	else if (passwordVerif == 1)
 	{
 		if (str[0].compare("NICK") == 0)
-			newnickname(str);
+			newnickname(str, server);
 		else if (str[0].compare("USER") == 0)
 			newusername(str);
 		else
@@ -149,8 +172,5 @@ void    Client::connectClient(std::string buf, std::string password)
 			isConnected = 1;
 	}
 	else
-	{
-		std::cout << "'" << buf << "'" <<  std::endl;
 		send(clientSocket, "You didn't input the password, you must use 'PASS <password>' to be connected to the server\n", 92, 0);
-	}
 }

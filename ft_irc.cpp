@@ -1,6 +1,9 @@
 
 
 #include "Server.hpp"
+#include "Client.hpp"
+
+Server server;
 
 void    parse_argv(Server& server, char **argv)
 {
@@ -102,10 +105,7 @@ void	Server::routine()
 					clients[i].finalbuf.push_back(clients[i].buf[0]);
 					if (clients[i].buf[0] == '\n')
 					{
-						if (clients[i].isConnected == 0)
-							clients[i].connectClient(clients[i].finalbuf.data(), pass);
-						else
-							std::cout << "Is connected and recive : " << clients[i].finalbuf.data() << std::endl;
+						clients[i].connectClient(clients[i].finalbuf.data(), pass, server);
 						std::vector<char>().swap(clients[i].finalbuf);
 					}
 					clients[i].buf.clear();

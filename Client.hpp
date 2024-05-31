@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/29 11:42:09 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:27:21 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include<cstring>
-#include<vector>
+#include <cstring>
+#include <vector>
 
-
+class Server;
 class Client
 {
 protected:
@@ -48,12 +48,12 @@ public:
     socklen_t addr_len;
     std::vector<char> buf;
 	std::vector<char> finalbuf;
-    void    connectClient(std::string buf, std::string password);
+    void    connectClient(std::string buf, std::string password, Server server);
+    void	createChannel(std::vector<std::string> str);
     void	verifPassword(std::vector<std::string> str, std::string password);
-    void	newnickname(std::vector<std::string> str);
+    void	newnickname(std::vector<std::string> str, Server server);
     void	newusername(std::vector<std::string> str);
     void	exec(std::vector<std::string> str);
-
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
