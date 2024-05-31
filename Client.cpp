@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/31 14:59:34 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/05/31 20:00:10 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,28 +30,28 @@ Client::~Client()
 }
 
 std::string trim(const std::string& str) {
-    std::string::const_iterator start = str.begin();
-    while (start != str.end() && std::isspace(*start))
-        ++start;
-    std::string::const_iterator end = str.end();
+	std::string::const_iterator start = str.begin();
+	while (start != str.end() && std::isspace(*start))
+		++start;
+	std::string::const_iterator end = str.end();
 	end--;
 	while (std::distance(start, end) > 0 && std::isspace(*end))
 		--end;
-    return std::string(start, end + 1);
+	return std::string(start, end + 1);
 }
 
 std::vector<std::string> split (const std::string &s, char delim) {
-    std::vector<std::string> result;
-    std::stringstream ss (s);
-    std::string item;
+	std::vector<std::string> result;
+	std::stringstream ss (s);
+	std::string item;
 	std::string item2;
 
-    while (getline (ss, item, delim)) 
+	while (getline (ss, item, delim)) 
 	{
 		item2 = trim(item);
-        result.push_back (item2);
-    }
-    return (result);
+		result.push_back (item2);
+	}
+	return (result);
 }
 
 void	Client::verifPassword(std::vector<std::string> str, std::string password)
@@ -115,12 +115,29 @@ void	Client::newnickname(std::vector<std::string> str, Server server)
 	hasNickname = 1;
 }
 
+void	sendmsg(int clientSocket, const std::string& msg) {
+	std::string newmsg = msg + "\r\n";
+	send(clientSocket, newmsg.c_str(), newmsg.length(), 0);
+}
+
+void    joinChannel(Client &client, const std::string& channel)
+{
+	std::string join;
+
+	join = ":" + client.nickname + " JOIN " + channel;
+	sendmsg(client.clientSocket, join);
+
+	//sendmsg(client.clientSocket, ": ");
+	sendmsg(client.clientSocket, ": " + client.servername + "331 " + client.nickname + " " + channel + " :no topic is set");
+}
+
+
 void	Client::createChannel(std::vector<std::string> str)
 {
 	if (str.size() < 2)
 	{
-		send(clientSocket, "JOIN :Not enough parameters\n", 28, 0);
-		return ;	
+		send(clientSocket, "JOIN : Not enough parameters\n", 28, 0);
+		return ;
 	}
 	if (server.channels.size() >= 1)
 	{
@@ -133,7 +150,7 @@ void	Client::createChannel(std::vector<std::string> str)
 	else
 		server.channels.push_back(Channel(str[1]));
 	std::cout << "server name : " << server.channels[0].channelName << std::endl;
-	
+	joinChannel(*this, server.channels[0].channelName);
 }
 
 void	Client::exec(std::vector<std::string> str)
@@ -149,7 +166,7 @@ void	Client::exec(std::vector<std::string> str)
 		return ;
 	}
 	if (str[0] == "JOIN")
-		createChannel(str);		
+		createChannel(str);
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server server)
