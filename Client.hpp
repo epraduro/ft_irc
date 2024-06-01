@@ -46,13 +46,13 @@ public:
     int hasUsername;
     sockaddr_in clientAddr;
     socklen_t addr_len;
-    std::vector<char> buf;
-	std::vector<char> finalbuf;
+    char buf[1];
+	std::string finalbuf;
     void    connectClient(std::string buf, std::string password, Server server);
     void	createChannel(std::vector<std::string> str);
     void	verifPassword(std::vector<std::string> str, std::string password);
     void	newnickname(std::vector<std::string> str, Server server);
-    void	newusername(std::vector<std::string> str);
+    void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
     void	exec(std::vector<std::string> str);
 };
 

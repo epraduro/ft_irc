@@ -16,8 +16,8 @@
 Client::Client(/* args */)
 {
 	addr_len = sizeof(clientAddr);
-	buf.resize(1);
 	finalbuf.resize(0);
+	bzero(buf, 1);
 	isConnected = 0;
 	passwordVerif = 0;
 	hasNickname = 0;
@@ -80,32 +80,22 @@ void	Client::verifPassword(std::vector<std::string> str, std::string password)
 			passwordVerif = 1;
 }
 
-void	Client::newusername(std::vector<std::string> str)
+void	Client::newusername(std::vector<std::string> str, std::vector<std::string> tmp)
 {
-	if (str.size() != 5 && str.size() != 6)
+	if (str.size() != 5 || tmp.empty())
 	{
 		send(clientSocket, "USER :Invalids arguments\n", 25, 0);
 		return ;
 	}
-	if (str[4][0] == ':')
-	{
 		username = str[1];
 		hostname = str[2];
 		servername = str[3];
-		if (str.size() == 6)
-			realname = str[4].substr(1, str[4].size()) + ' ' + str[5];
-		else
-			realname = str[4].substr(1, str[4].size());
+		realname = str[4];
 		hasUsername = 1;
 		std::cout << "user : " << username << std::endl;
 		std::cout << "host : " << hostname << std::endl;
 		std::cout << "server : " << servername << std::endl;
 		std::cout << "realname : " << realname << std::endl;
-	}
-	else
-		send(clientSocket, "USER :Error, username must be prefixed with a :\n", 48, 0);
-		
-
 }
 
 void	Client::newnickname(std::vector<std::string> str, Server server)
@@ -176,7 +166,15 @@ void	Client::exec(std::vector<std::string> str)
 void    Client::connectClient(std::string buf, std::string password, Server server)
 {
 	std::vector<std::string> str;
-	str = split(buf, ' ');
+	std::vector<std::string> tmp;
+	if (buf.find(":") != std::string::npos)
+	{
+		tmp = split(buf, ':');
+		str = split(tmp[0], ' ');
+		str.push_back(tmp[1]);
+	}	
+	else
+		str = split(buf, ' ');
 	if (str.size() == 3 && str[0] == "CAP" && str[1] == "LS" && str[2] == "302")
 		return ;
 	if (str[0].compare("PASS") == 0)
@@ -186,7 +184,7 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 		if (str[0].compare("NICK") == 0)
 			newnickname(str, server);
 		else if (str[0].compare("USER") == 0)
-			newusername(str);
+			newusername(str, tmp);
 		else
 			exec(str);
 		if (hasNickname == 1 && hasUsername == 1)

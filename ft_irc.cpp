@@ -100,16 +100,15 @@ void	Server::routine()
 		{
 			for (nfds_t i = 0; i < nfds; i++)
 			{
-				if (recv(clients[i].clientSocket, clients[i].buf.data(), clients[i].buf.size(), MSG_DONTWAIT) == 1)
+				if (recv(clients[i].clientSocket, clients[i].buf, 1, MSG_DONTWAIT) == 1)
 				{
-					clients[i].finalbuf.push_back(clients[i].buf[0]);
+					clients[i].finalbuf.append(clients[i].buf);
 					if (clients[i].buf[0] == '\n')
 					{
 						clients[i].connectClient(clients[i].finalbuf.data(), pass, server);
-						std::vector<char>().swap(clients[i].finalbuf);
+						clients[i].finalbuf.clear();
 					}
-					clients[i].buf.clear();
-					clients[i].buf.resize(1);
+					bzero(clients[i].buf, 1);
 				}
 					
 			}
