@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/31 20:00:10 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/01 13:26:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ Client::Client(/* args */)
 Client::~Client()
 {
 	
+}
+
+void	sendmsg(int clientSocket, const std::string& msg) {
+	std::string newmsg = msg + "\r\n";
+	send(clientSocket, newmsg.c_str(), newmsg.length(), 0);
 }
 
 std::string trim(const std::string& str) {
@@ -111,13 +116,12 @@ void	Client::newnickname(std::vector<std::string> str, Server server)
 		send(clientSocket, "NICK :Not enough parameters\n", 28, 0);
 		return ;
 	}
+	if (nickname.empty())
+		sendmsg(clientSocket, "NICK " + str[1]);
+	else
+		sendmsg(clientSocket, ":" + nickname + " NICK " + str[1]);
 	nickname = str[1];
 	hasNickname = 1;
-}
-
-void	sendmsg(int clientSocket, const std::string& msg) {
-	std::string newmsg = msg + "\r\n";
-	send(clientSocket, newmsg.c_str(), newmsg.length(), 0);
 }
 
 void    joinChannel(Client &client, const std::string& channel)
