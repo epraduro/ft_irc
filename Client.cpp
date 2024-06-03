@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/01 13:26:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/03 17:06:28 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,33 +96,37 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 		std::cout << "host : " << hostname << std::endl;
 		std::cout << "server : " << servername << std::endl;
 		std::cout << "realname : " << realname << std::endl;
+		std::cout << "nicname : " << nickname << std::endl;
+		//sendmsg(clientSocket, ":" + nickname + " USER " + username + " " + hostname + " " + servername + " :" + realname);
+		//sendmsg(clientSocket, ":" + nickname + " USER " + username);
+		//":" + clientInfo.userName + " USER " + user + "\r\n";
 }
 
 void	Client::newnickname(std::vector<std::string> str, Server server)
 {
 	(void)server;
+	std::string	temp;
+
 	if (str.size() != 2)
 	{
 		send(clientSocket, "NICK :Not enough parameters\n", 28, 0);
 		return ;
 	}
-	if (nickname.empty())
-		sendmsg(clientSocket, "NICK " + str[1]);
-	else
-		sendmsg(clientSocket, ":" + nickname + " NICK " + str[1]);
+	if (!nickname.empty())
+		temp = nickname;
 	nickname = str[1];
 	hasNickname = 1;
+	sendmsg(clientSocket, ":" + temp + " NICK " + nickname);
 }
 
 void    joinChannel(Client &client, const std::string& channel)
 {
 	std::string join;
 
+	std::cout << "nickname3 = " << client.nickname << std::endl;
 	join = ":" + client.nickname + " JOIN " + channel;
 	sendmsg(client.clientSocket, join);
-
-	//sendmsg(client.clientSocket, ": ");
-	sendmsg(client.clientSocket, ": " + client.servername + "331 " + client.nickname + " " + channel + " :no topic is set");
+	sendmsg(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
 }
 
 
