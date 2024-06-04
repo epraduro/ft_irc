@@ -89,8 +89,6 @@ void	Server::routine()
 				tmp.revents = 0;
 				fds.push_back(tmp);
 				send(clients[nfds].clientSocket, "Coucou\n", 7, 0);
-				if (nfds >= 1)
-					send(clients[0].clientSocket, "Another client is connected\n", 28, 0);
 				nfds++;
 				fds[0].revents = 0;
 			}

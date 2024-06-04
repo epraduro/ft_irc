@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 15:23:06 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 20:37:51 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	Client::createChannel(std::vector<std::string> str)
 			{
 				std::cout << "server name already exist" << std::endl;
 				//if (MODE)
-				joinChannel(*this, server.channels[i].channelName);
+					joinChannel(*this, server.channels[i].channelName);
 				return ;
 			}
 		}
@@ -160,7 +160,55 @@ void	Client::createChannel(std::vector<std::string> str)
 	}
 }
 
-void	Client::exec(std::vector<std::string> str)
+void	Client::privateMessage(std::vector<std::string> str, std::vector<std::string> tmp)
+{
+	std::vector<std::string> target;
+	int sent = 0;
+	if (str[1].find(",") != std::string::npos)
+		target = split(str[1].c_str(), ',');
+	else
+		target.push_back(str[1]);
+	if (str.size() < 3 || tmp.empty())
+	{
+		send(clientSocket, "PRIVMSG : Not enough parameters\n", 32, 0);
+		return ;
+	}
+	for(unsigned long j = 0; j < target.size() ;j++)
+	{
+		for (unsigned long i = 0; i < server.clients.size(); i++)
+		{
+			if (server.clients[i].nickname == target[j])
+			{
+				for(unsigned long k = 0; k < inConv.size() ;k++)
+				{
+					if(inConv[k] == target[j])
+					{
+						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+						sent = 1;
+					}
+				}
+				for(unsigned long k = 0; k < server.clients[i].inConv.size() ;k++)
+				{
+					if(server.clients[i].inConv[k] == target[j])
+					{
+						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+						sent = 1;
+					}
+				}
+				if (sent == 0)
+				{	
+					sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+					sendmsg(clientSocket, ":" + server.clients[i].nickname + " PRIVMSG " + nickname + " :" + str[2]);
+					inConv.push_back(server.clients[i].nickname);
+					server.clients[i].inConv.push_back(nickname);
+				}
+				break;
+			}
+		}
+	}
+}
+
+void	Client::exec(std::vector<std::string> str, std::vector<std::string> tmp)
 {
 	if (hasNickname == 0)
 	{
@@ -174,6 +222,8 @@ void	Client::exec(std::vector<std::string> str)
 	}
 	if (str[0] == "JOIN")
 		createChannel(str);
+	if (str[0] == "PRIVMSG")
+		privateMessage(str, tmp);
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server server)
@@ -199,7 +249,7 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 		else if (str[0].compare("USER") == 0)
 			newusername(str, tmp);
 		else
-			exec(str);
+			exec(str, tmp);
 		if (hasNickname == 1 && hasUsername == 1)
 			isConnected = 1;
 	}

@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/31 13:27:21 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 19:38:59 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ public:
     int clientSocket;
     int isConnected;
     int passwordVerif;
+    std::vector<std::string> inConv;
     std::string nickname;
     std::string username;
     std::string hostname;
@@ -53,7 +54,8 @@ public:
     void	verifPassword(std::vector<std::string> str, std::string password);
     void	newnickname(std::vector<std::string> str, Server server);
     void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
-    void	exec(std::vector<std::string> str);
+    void	exec(std::vector<std::string> str, std::vector<std::string> tmp);
+    void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
