@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/03 17:06:28 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:23:06 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,25 +81,23 @@ void	Client::verifPassword(std::vector<std::string> str, std::string password)
 }
 
 void	Client::newusername(std::vector<std::string> str, std::vector<std::string> tmp)
-{
+{	
 	if (str.size() != 5 || tmp.empty())
 	{
 		send(clientSocket, "USER :Invalids arguments\n", 25, 0);
 		return ;
 	}
-		username = str[1];
-		hostname = str[2];
-		servername = str[3];
-		realname = str[4];
-		hasUsername = 1;
-		std::cout << "user : " << username << std::endl;
-		std::cout << "host : " << hostname << std::endl;
-		std::cout << "server : " << servername << std::endl;
-		std::cout << "realname : " << realname << std::endl;
-		std::cout << "nicname : " << nickname << std::endl;
-		//sendmsg(clientSocket, ":" + nickname + " USER " + username + " " + hostname + " " + servername + " :" + realname);
-		//sendmsg(clientSocket, ":" + nickname + " USER " + username);
-		//":" + clientInfo.userName + " USER " + user + "\r\n";
+	username = str[1];
+	hostname = str[2];
+	servername = str[3];
+	realname = str[4];
+	hasUsername = 1;
+	std::cout << "user : " << username << std::endl;
+	std::cout << "host : " << hostname << std::endl;
+	std::cout << "server : " << servername << std::endl;
+	std::cout << "realname : " << realname << std::endl;
+	std::cout << "nickname : " << nickname << std::endl;
+	//sendmsg(clientSocket, ": USER " + username);
 }
 
 void	Client::newnickname(std::vector<std::string> str, Server server)
@@ -123,10 +121,11 @@ void    joinChannel(Client &client, const std::string& channel)
 {
 	std::string join;
 
-	std::cout << "nickname3 = " << client.nickname << std::endl;
 	join = ":" + client.nickname + " JOIN " + channel;
 	sendmsg(client.clientSocket, join);
-	sendmsg(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
+	//sendmsg(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
+	// 331 no topic
+	// 332 si il y a topic
 }
 
 
@@ -139,16 +138,26 @@ void	Client::createChannel(std::vector<std::string> str)
 	}
 	if (server.channels.size() >= 1)
 	{
-		for (int i = 0; server.channels[i].channelName.empty(); i++)
+		for (int i = 0; !server.channels[i].channelName.empty(); i++)
 		{
 			if (server.channels[i].channelName == str[1])
+			{
 				std::cout << "server name already exist" << std::endl;
+				//if (MODE)
+				joinChannel(*this, server.channels[i].channelName);
+				return ;
+			}
 		}
 	}
-	else
-		server.channels.push_back(Channel(str[1]));
-	std::cout << "server name : " << server.channels[0].channelName << std::endl;
-	joinChannel(*this, server.channels[0].channelName);
+	server.channels.push_back(Channel(str[1]));
+	for (int i = 0; !server.channels[i].channelName.empty(); i++)
+	{
+		if (server.channels[i].channelName == str[1])
+		{
+			joinChannel(*this, server.channels[i].channelName);
+			std::cout << "server name : " << server.channels[i].channelName << std::endl;
+		}	
+	}
 }
 
 void	Client::exec(std::vector<std::string> str)
