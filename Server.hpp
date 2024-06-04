@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/31 13:49:53 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 18:01:11 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#pragma once
+# pragma once
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <iostream>
@@ -45,6 +45,7 @@ class Server
         int serverSocket;
         Server(/* args */);
         Server(char **argv);
+        void kick_chan(std::vector<std::string> buffer);
         std::string     pass;
         ~Server();
         void routine();

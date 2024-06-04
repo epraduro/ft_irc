@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 15:23:06 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:49:07 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Client::Client(/* args */)
 {
 	addr_len = sizeof(clientAddr);
 	finalbuf.resize(0);
+	isOp = 0;
 	bzero(buf, 1);
 	isConnected = 0;
 	passwordVerif = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/05/31 13:52:59 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:51:56 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ class Channel
         
     public:
         std::string channelName;
-        Channel(std::string name);
+        std::vector<std::string> op;
+        Channel(std::string name, std::string n_op);
         Channel();
         ~Channel();
 };
