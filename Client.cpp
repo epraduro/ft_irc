@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 20:37:51 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/04 20:41:42 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Client::Client(/* args */)
 {
 	addr_len = sizeof(clientAddr);
 	finalbuf.resize(0);
+	isOp = 0;
 	bzero(buf, 1);
 	isConnected = 0;
 	passwordVerif = 0;

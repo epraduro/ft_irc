@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Channel.cpp                                        :+:      :+:    :+:   */
+/*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/29 18:22:51 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 17:52:26 by ogregoir         ###   ########.fr       */
+/*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
+/*   Updated: 2024/06/04 18:03:16 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Channel.hpp"
 
-Channel::Channel()
+#include "Server.hpp"
+
+void    Server::kick_chan(std::vector<std::string> buffer)
 {
-
-}
-
-Channel::~Channel()
-{
-	
-}
-
-Channel::Channel(std::string name, std::string n_op)
-{
-    channelName = name;
-    op.push_back(n_op);  
+    int i = 0;
+    
+    if (!buffer[0].compare("KICK"))
+        return ;
+    while (!server.channels[i].channelName.empty())
+    {
+        if (server.channels[i].channelName == buffer[1])
+            break;
+        i++;
+    }
+    
 }
