@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 20:44:57 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/05 19:16:36 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <cstring>
 #include <vector>
+#include"Client.hpp"
 
 class Channel
 {
@@ -31,8 +32,9 @@ class Channel
         
     public:
         std::string channelName;
+        std::vector<Client> users;
         std::vector<std::string> op;
-        Channel(std::string name, std::string n_op);
+        Channel(std::string name, std::string n_op, Client client);
         Channel();
         ~Channel();
 };

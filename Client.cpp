@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 20:47:20 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/05 19:25:41 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,19 +143,21 @@ void	Client::createChannel(std::vector<std::string> str)
 			if (server.channels[i].channelName == str[1])
 			{
 				std::cout << "server name already exist" << std::endl;
+				server.channels[i].users.push_back(*this);
 				//if (MODE)
-					joinChannel(*this, server.channels[i].channelName);
+				joinChannel(*this, server.channels[i].channelName);
 				return ;
 			}
 		}
 	}
-	server.channels.push_back(Channel(str[1], nickname));
+	server.channels.push_back(Channel(str[1], nickname, *this));
 	for (int i = 0; !server.channels[i].channelName.empty(); i++)
 	{
 		if (server.channels[i].channelName == str[1])
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			std::cout << "server name : " << server.channels[i].channelName << std::endl;
+			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
 	}
 }
@@ -175,37 +177,49 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 	}
 	for(unsigned long j = 0; j < target.size() ;j++)
 	{
-		for (unsigned long i = 0; i < server.clients.size(); i++)
+		/*if (target[j][0] == '#')
 		{
-			if (server.clients[i].nickname == target[j])
+			for (unsigned long i = 0; i < server.channels.size(); i++)
 			{
-				for(unsigned long k = 0; k < inConv.size() ;k++)
-				{
-					if(inConv[k] == target[j])
+				if (server.channels[i].channelName == target[j].c_str() + 1)
 					{
-						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
-						sent = 1;
+						
 					}
-				}
-				for(unsigned long k = 0; k < server.clients[i].inConv.size() ;k++)
-				{
-					if(server.clients[i].inConv[k] == target[j])
-					{
-						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
-						sent = 1;
-					}
-				}
-				if (sent == 0)
-				{	
-					sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
-					sendmsg(clientSocket, ":" + server.clients[i].nickname + " PRIVMSG " + nickname + " :" + str[2]);
-					inConv.push_back(server.clients[i].nickname);
-					server.clients[i].inConv.push_back(nickname);
-				}
-				break;
 			}
 		}
-	}
+		else
+		{*/
+			for (unsigned long i = 0; i < server.clients.size(); i++)
+			{
+				if (server.clients[i].nickname == target[j])
+				{
+					for(unsigned long k = 0; k < inConv.size() ;k++)
+					{
+						if(inConv[k] == target[j])
+						{
+							sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+							sent = 1;
+						}
+					}
+					for(unsigned long k = 0; k < server.clients[i].inConv.size() ;k++)
+					{
+						if(server.clients[i].inConv[k] == target[j])
+						{
+							sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+							sent = 1;
+						}
+					}
+					if (sent == 0)
+					{	
+						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+					//	sendmsg(clientSocket, ":" + nickname + " PRIVMSG " + nickname + " :" +  str[2]);
+						inConv.push_back(server.clients[i].nickname);
+						server.clients[i].inConv.push_back(nickname);
+					}
+					break;
+				}
+			}
+		}
 }
 
 void	Client::exec(std::vector<std::string> str, std::vector<std::string> tmp)
