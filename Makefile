@@ -3,16 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+         #
+#    By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/08 14:24:51 by rgreiner          #+#    #+#              #
-#    Updated: 2024/05/31 13:08:47 by rgreiner         ###   ########.fr        #
+#    Updated: 2024/06/05 17:54:00 by ogregoir         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS    =	ft_irc.cpp \
 			Client.cpp \
 			Channel.cpp \
+			operation_channels.cpp \
 
 OBJS    =   ${SRCS:.c=.o}
 RM      =   rm -f
