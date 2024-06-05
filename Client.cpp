@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 20:47:20 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/05 19:09:09 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Client::Client(/* args */)
 	finalbuf.resize(0);
 	bzero(buf, 1);
 	isConnected = 0;
+	op = 0;
 	passwordVerif = 0;
 	hasNickname = 0;
 	hasUsername = 0;
@@ -29,7 +30,7 @@ Client::~Client()
 	
 }
 
-void	sendmsg(int clientSocket, const std::string& msg) {
+void	sendirc(int clientSocket, const std::string& msg) {
 	std::string newmsg = msg + "\r\n";
 	send(clientSocket, newmsg.c_str(), newmsg.length(), 0);
 }
@@ -97,7 +98,7 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 	std::cout << "server : " << servername << std::endl;
 	std::cout << "realname : " << realname << std::endl;
 	std::cout << "nickname : " << nickname << std::endl;
-	//sendmsg(clientSocket, ": USER " + username);
+	//sendirc(clientSocket, ": USER " + username);
 }
 
 void	Client::newnickname(std::vector<std::string> str, Server server)
@@ -114,7 +115,7 @@ void	Client::newnickname(std::vector<std::string> str, Server server)
 		temp = nickname;
 	nickname = str[1];
 	hasNickname = 1;
-	sendmsg(clientSocket, ":" + temp + " NICK " + nickname);
+	sendirc(clientSocket, ":" + temp + " NICK " + nickname);
 }
 
 void    joinChannel(Client &client, const std::string& channel)
@@ -122,12 +123,11 @@ void    joinChannel(Client &client, const std::string& channel)
 	std::string join;
 
 	join = ":" + client.nickname + " JOIN " + channel;
-	sendmsg(client.clientSocket, join);
-	//sendmsg(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
+	sendirc(client.clientSocket, join);
+	//sendirc(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
 	// 331 no topic
 	// 332 si il y a topic
 }
-
 
 void	Client::createChannel(std::vector<std::string> str)
 {
@@ -155,6 +155,7 @@ void	Client::createChannel(std::vector<std::string> str)
 		if (server.channels[i].channelName == str[1])
 		{
 			joinChannel(*this, server.channels[i].channelName);
+			op = 1;
 			std::cout << "server name : " << server.channels[i].channelName << std::endl;
 		}	
 	}
@@ -183,7 +184,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 				{
 					if(inConv[k] == target[j])
 					{
-						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+						sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
 						sent = 1;
 					}
 				}
@@ -191,14 +192,14 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 				{
 					if(server.clients[i].inConv[k] == target[j])
 					{
-						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+						sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
 						sent = 1;
 					}
 				}
 				if (sent == 0)
 				{	
-					sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
-					sendmsg(clientSocket, ":" + server.clients[i].nickname + " PRIVMSG " + nickname + " :" + str[2]);
+					sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+					sendirc(clientSocket, ":" + server.clients[i].nickname + " PRIVMSG " + nickname + " :" + str[2]);
 					inConv.push_back(server.clients[i].nickname);
 					server.clients[i].inConv.push_back(nickname);
 				}
@@ -208,8 +209,10 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 	}
 }
 
-void	Client::exec(std::vector<std::string> str, std::vector<std::string> tmp)
+void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp)
 {
+	(void)server;
+	int i = str.size(); 
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);
@@ -224,6 +227,12 @@ void	Client::exec(std::vector<std::string> str, std::vector<std::string> tmp)
 		createChannel(str);
 	if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
+    if (str[0] == "INVITE")
+        server.invite_chan(*this, i, str);
+    else if (str[0] == "TOPIC")
+        server.topic_chan(tmp, *this, i, str);
+    else if (str[0] == "KICK")
+        server.kick_chan(i, *this, tmp, str);
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server server)
@@ -249,7 +258,7 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 		else if (str[0].compare("USER") == 0)
 			newusername(str, tmp);
 		else
-			exec(str, tmp);
+			exec(server, str, tmp);
 		if (hasNickname == 1 && hasUsername == 1)
 			isConnected = 1;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/05 13:53:17 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/05 19:02:28 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,9 @@ class Server
         int serverSocket;
         Server(/* args */);
         Server(char **argv);
-        void    chan_op(int op, std::vector<std::string> buffer);
-       // void kick_chan(std::vector<std::string> buffer);
-      //  void invite_chan(int op, std::vector<std::string> buffer);
-       // void topic_chan(int op, std::vector<std::string> buffer)
+        void    topic_chan(std::vector<std::string> tmp, Client &client, int arg, std::vector<std::string> buffer);
+        void    invite_chan(Client &client, int arg, std::vector<std::string> buffer);
+        void    kick_chan(int arg, Client &client, std::vector<std::string> tmp, std::vector<std::string> buffer);
         std::string     pass;
         ~Server();
         void routine();

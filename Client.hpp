@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/04 20:41:51 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:50:17 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ public:
     Client(/* args */);
     ~Client();
     int clientSocket;
+    int op;
     int isConnected;
     int passwordVerif;
     std::vector<std::string> inConv;
@@ -54,9 +55,10 @@ public:
     void	verifPassword(std::vector<std::string> str, std::string password);
     void	newnickname(std::vector<std::string> str, Server server);
     void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
-    void	exec(std::vector<std::string> str, std::vector<std::string> tmp);
+    void	exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp);
     void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
 std::string trim(const std::string& str);
+void    sendirc(int clientSocket, const std::string& msg);
