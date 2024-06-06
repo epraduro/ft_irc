@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/05 20:12:14 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/06 10:35:36 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Channel
     public:
         std::string channelName;
         std::vector<Client> users;
+        int ChannelSocket;
         std::vector<std::string> op;
         Channel(std::string name, std::string n_op, Client client);
         Channel();
