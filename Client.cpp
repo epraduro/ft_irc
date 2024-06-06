@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/05 20:11:53 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:01:10 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,6 @@ void    joinChannel(Client &client, const std::string& channel)
 
 	join = ":" + client.nickname + " JOIN " + channel;
 	sendirc(client.clientSocket, join);
-	//sendirc(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
-	// 331 no topic
-	// 332 si il y a topic
 }
 
 void	Client::createChannel(std::vector<std::string> str)
@@ -157,7 +154,7 @@ void	Client::createChannel(std::vector<std::string> str)
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			op = 1;
-			std::cout << "server name : " << server.channels[i].channelName << std::endl;
+			std::cout << "channel name : " << server.channels[i].channelName << std::endl;
 			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
 	}
@@ -198,7 +195,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 					{
 						if(inConv[k] == target[j])
 						{
-							sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+							sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
 							sent = 1;
 						}
 					}
@@ -206,13 +203,13 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 					{
 						if(server.clients[i].inConv[k] == target[j])
 						{
-							sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+							sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
 							sent = 1;
 						}
 					}
 					if (sent == 0)
 					{	
-						sendmsg(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
+						sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
 					//	sendmsg(clientSocket, ":" + nickname + " PRIVMSG " + nickname + " :" +  str[2]);
 						inConv.push_back(server.clients[i].nickname);
 						server.clients[i].inConv.push_back(nickname);
@@ -253,6 +250,8 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 {
 	std::vector<std::string> str;
 	std::vector<std::string> tmp;
+	
+	std::cout << "buffer = " << buf << std::endl;
 	if (buf.find(":") != std::string::npos)
 	{
 		tmp = split(buf, ':');
