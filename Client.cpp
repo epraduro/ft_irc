@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/06 15:35:02 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:24:41 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,6 @@ void    joinChannel(Client &client, const std::string& channel)
 
 	join = ":" + client.nickname + " JOIN " + channel;
 	sendirc(client.clientSocket, join);
-	//sendirc(client.clientSocket, ": " + client.servername + " 331 " + client.nickname + " " + channel + " :no topic is set");
-	// 331 no topic
-	// 332 si il y a topic
 }
 
 void	Client::createChannel(std::vector<std::string> str)
@@ -170,6 +167,7 @@ void	Client::createChannel(std::vector<std::string> str)
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			op = 1;
+			std::cout << "channel name : " << server.channels[i].channelName << std::endl;
 			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
 	}
@@ -274,7 +272,8 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 {
 	std::vector<std::string> str;
 	std::vector<std::string> tmp;
-	std::cout << "buf :" << buf << std::endl;
+	
+	std::cout << "buffer = " << buf << std::endl;
 	if (buf.find(":") != std::string::npos)
 	{
 		tmp = split2(buf, ':');
