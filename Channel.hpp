@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 20:41:31 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/11 22:00:17 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,15 @@
 
 class Channel
 {
-    protected:
-        
-    public:
-        std::string channelName;
-        std::vector<Client> users;
-        int ChannelSocket;
-        std::vector<std::string> op;
-        std::string subject;
-        Channel(std::string name, std::string n_op, Client client);
-        Channel();
-        ~Channel();
+	protected:
+		
+	public:
+		std::string					channelName;
+		std::vector<Client>			users;
+		int							ChannelSocket;
+		std::vector<std::string>	op;
+		std::string					subject;
+		Channel(std::string name, std::string n_op, Client client);
+		Channel();
+		~Channel();
 };
