@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/06 16:24:41 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:35:56 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 
 void	Client::newnickname(std::vector<std::string> str, Server server)
 {
-	(void)server;
 	std::string	temp;
 
 	if (str.size() != 2)
@@ -120,8 +119,41 @@ void	Client::newnickname(std::vector<std::string> str, Server server)
 		send(clientSocket, "NICK :Not enough parameters\n", 28, 0);
 		return ;
 	}
+	for (unsigned long i = 0; i < server.clients.size(); i++)
+	{
+		if (server.clients[i].nickname == str[1])
+		{
+			send(clientSocket, "NICK :Nickname already exist\n", 29, 0);
+			return;
+		}
+	}
 	if (!nickname.empty())
+	{
+		for (unsigned long i = 0; i < server.channels.size(); i++)
+		{
+			for (unsigned long j = 0; j < server.channels[i].users.size(); j++)
+			{
+				if (server.channels[i].users[j].nickname == str[1])
+					server.channels[i].users[j].nickname = str[1];
+			}
+			for (unsigned long j = 0; j < server.channels[i].op.size(); j++)
+			{
+				if (server.channels[i].op[j] == str[1])
+					server.channels[i].op[j] = str[1];
+			}
+		}
+		for (unsigned long l = 0; l < server.clients.size(); l++)
+		{
+			for (unsigned long k = 0; k < server.clients[l].inConv.size(); k++)
+			{
+				if (server.clients[l].inConv[k] == str[1])
+					server.clients[l].inConv[k] = str[1];
+			}
+			if (server.clients[l].nickname == str[1])
+				server.clients[l].nickname = str[1];
+		}
 		temp = nickname;
+	}
 	nickname = str[1];
 	hasNickname = 1;
 	sendirc(clientSocket, ":" + temp + " NICK " + nickname);
@@ -190,18 +222,38 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 	{
 		if (target[j][0] == '#')
 		{
-			std::cout << "PASS1" << std::endl;
+			if (server.channels.size() == 0)
+			{
+				sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
+				return ;
+			}
 			for (unsigned long i = 0; i < server.channels.size(); i++)
 			{
-				std::cout << "PASS2" << std::endl;
 				if (server.channels[i].channelName == target[j].c_str())
 					{
-						std::cout << "PASS3" << std::endl;
+						for (unsigned long k = 0; k < server.channels[i].users.size(); k++)
+						{
+							if (server.channels[i].users[k].nickname == nickname)
+								break;
+							if (k == server.channels[i].users.size())
+							{
+								sendirc(clientSocket, ":" + servername + " 404 " + nickname + " " + server.channels[i].channelName + " :Cannot send to channel");
+								return ;
+							}
+						}
 						for (unsigned long k = 0; k < server.channels[i].users.size(); k++)
 						{
 							if (server.channels[i].users[k].nickname != nickname)
+							{
 								sendirc(server.channels[i].users[k].clientSocket, ":" + nickname + " PRIVMSG " + server.channels[i].channelName + " :" + str[2]);
+								sent = 1;
+							}
 						}
+					}
+				if (sent == 0 && i == server.channels.size() - 1)
+					{
+						sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
+						return ;
 					}
 			}
 		}
@@ -227,14 +279,19 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 							sent = 1;
 						}
 					}
-					if (sent == 0)
+					if (sent == 0 || sent == 2)
 					{	
 						sendirc(server.clients[i].clientSocket, ":" + nickname + " PRIVMSG " + server.clients[i].nickname + " :" + str[2]);
-					//	sendirc(clientSocket, ":" + nickname + " PRIVMSG " + nickname + " :" +  str[2]);
 						inConv.push_back(server.clients[i].nickname);
 						server.clients[i].inConv.push_back(nickname);
+						sent = 2;
 					}
 					break;
+				}
+				if (sent == 0 && i == server.clients.size() - 1)
+				{
+					sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
+					return ;
 				}
 			}
 		}
@@ -279,7 +336,7 @@ void    Client::connectClient(std::string buf, std::string password, Server serv
 		tmp = split2(buf, ':');
 		str = split(tmp[0], ' ');
 		str.push_back(tmp[1]);
-	}	
+	}
 	else
 		str = split(buf, ' ');
 	if (str.size() == 3 && str[0] == "CAP" && str[1] == "LS" && str[2] == "302")

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/06 15:32:37 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/11 19:31:33 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 {
     int i = 0;
     int count = 0;
+    int cpy_i;
 
     if (arg < 3 || arg > 4)
     {
@@ -41,6 +42,7 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
     {
         return ;
     }
+    cpy_i = i;
     i = 0;
     count = server.clients.size();
     while(!server.clients[i].username.empty())
