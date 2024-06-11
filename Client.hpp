@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/05 17:50:17 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/11 17:18:07 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,34 +29,33 @@
 class Server;
 class Client
 {
-protected:
+    protected:
 
-public:
-    Client(/* args */);
-    ~Client();
-    int clientSocket;
-    int op;
-    int isConnected;
-    int passwordVerif;
-    std::vector<std::string> inConv;
-    std::string nickname;
-    std::string username;
-    std::string hostname;
-    std::string servername;
-    std::string realname;
-    int hasNickname;
-    int hasUsername;
-    sockaddr_in clientAddr;
-    socklen_t addr_len;
-    char buf[1];
-	std::string finalbuf;
-    void    connectClient(std::string buf, std::string password, Server server);
-    void	createChannel(std::vector<std::string> str);
-    void	verifPassword(std::vector<std::string> str, std::string password);
-    void	newnickname(std::vector<std::string> str, Server server);
-    void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
-    void	exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp);
-    void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
+    public:
+        Client(/* args */);
+        ~Client();
+        int clientSocket;
+        int isConnected;
+        int passwordVerif;
+        std::vector<std::string> inConv;
+        std::string nickname;
+        std::string username;
+        std::string hostname;
+        std::string servername;
+        std::string realname;
+        int hasNickname;
+        int hasUsername;
+        sockaddr_in clientAddr;
+        socklen_t addr_len;
+        char buf[1];
+        std::string finalbuf;
+        void    connectClient(std::string buf, std::string password, Server server);
+        void	createChannel(std::vector<std::string> str, std::vector<std::string> tmp);
+        void	verifPassword(std::vector<std::string> str, std::string password);
+        void	newnickname(std::vector<std::string> str, Server server);
+        void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
+        void	exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp);
+        void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
