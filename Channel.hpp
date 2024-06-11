@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 19:32:00 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:41:31 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@
 #include <cstring>
 #include <vector>
 #include"Client.hpp"
+
+# define ERR_CHANOPRIVSNEEDED " :You're not channel operator" //482
+# define ERR_NEEDMOREPARAMS " :Not enough parameters"   //461
+# define ERR_NOTONCHANNEL " :You're not on that channel" //442
+# define ERR_NOSUCHNICK " :No such nick/channel" //401
+# define ERR_USERONCHANNEL " :is already on channel" //443
+# define ERR_NOSUCHCHANNEL " :No such channel" //403
+# define ERR_USERNOTINCHANNEL " :They aren't on that channel" //441
 
 class Channel
 {

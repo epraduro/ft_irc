@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/05 19:02:28 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/11 17:50:50 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class Server
         void    topic_chan(std::vector<std::string> tmp, Client &client, int arg, std::vector<std::string> buffer);
         void    invite_chan(Client &client, int arg, std::vector<std::string> buffer);
         void    kick_chan(int arg, Client &client, std::vector<std::string> tmp, std::vector<std::string> buffer);
+        void    update_topic(std::vector<std::string> buffer, unsigned long i);
         std::string     pass;
         ~Server();
         void routine();

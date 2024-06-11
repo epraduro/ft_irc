@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 20:35:56 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:41:12 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ Client::Client(/* args */)
 	finalbuf.resize(0);
 	bzero(buf, 1);
 	isConnected = 0;
-	op = 0;
 	passwordVerif = 0;
 	hasNickname = 0;
 	hasUsername = 0;
@@ -167,7 +166,7 @@ void    joinChannel(Client &client, const std::string& channel)
 	sendirc(client.clientSocket, join);
 }
 
-void	Client::createChannel(std::vector<std::string> str)
+void	Client::createChannel(std::vector<std::string> str, std::vector<std::string> tmp)
 {
 	if (str.size() < 2)
 	{
@@ -186,8 +185,8 @@ void	Client::createChannel(std::vector<std::string> str)
 			if (server.channels[i].channelName == str[1])
 			{
 				server.channels[i].users.push_back(*this);
-				//if (MODE)
 				joinChannel(*this, server.channels[i].channelName);
+				server.topic_chan(tmp, *this, str.size(), str);
 				return ;
 			}
 		}
@@ -198,7 +197,7 @@ void	Client::createChannel(std::vector<std::string> str)
 		if (server.channels[i].channelName == str[1])
 		{
 			joinChannel(*this, server.channels[i].channelName);
-			op = 1;
+			server.topic_chan(tmp, *this, str.size(), str);
 			std::cout << "channel name : " << server.channels[i].channelName << std::endl;
 			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
@@ -314,7 +313,7 @@ void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::
 		return ;
 	}
 	if (str[0] == "JOIN")
-		createChannel(str);
+		createChannel(str, tmp);
 	if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
     if (str[0] == "INVITE")

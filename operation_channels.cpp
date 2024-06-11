@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/11 19:31:33 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:42:02 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,44 +17,58 @@
 
 void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp, std::vector<std::string> buffer)
 {
-    int i = 0;
-    int count = 0;
-    int cpy_i;
+    unsigned long i = 0;
+    unsigned long j = 0;
 
     if (arg < 3 || arg > 4)
     {
-        std::cout << "<commande> :Not enough parameters" << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 461 TOPIC" + ERR_NEEDMOREPARAMS);
         return ;
     }  
-    if (client.op != 1)
-    {
-         std::cout << "<canal> :You're not channel operator" << std::endl;
-        return ;
-    }
-    count = server.channels.size();
-    while (!server.channels[i].channelName.empty())
+    while ((server.channels.size() - 1) != i)
     {
         if (server.channels[i].channelName == buffer[1])
             break;
         i++;
     }
-    if (i == count)
+    if (i == server.channels.size())
     {
+        sendirc(client.clientSocket, ":" + client.servername + " 403 " + server.channels[i].channelName + ERR_NOSUCHCHANNEL);
         return ;
     }
-    cpy_i = i;
-    i = 0;
-    count = server.clients.size();
-    while(!server.clients[i].username.empty())
+    while ((server.channels[i].users.size() - 1) != j)
     {
-        std::cout << server.clients[i].username << std::endl;
-        if (server.clients[i].username == buffer[2])
+        if (server.channels[i].users[j].nickname == client.nickname)
             break ;
-        i++;
+        j++;
     }
-    if (i == count)
+    if (j == server.channels[i].users.size())
     {
-        std::cout << "<pseudonyme> :No such nick/channel" << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
+        return ;
+    }
+    j = 0;
+    while ((server.channels[i].op[j].size() - 1) != j)
+    {
+        if (server.channels[i].op[j] == client.nickname)
+            break ;
+        j++;
+    }
+    if (j == server.channels[i].op.size())
+    {
+        sendirc(client.clientSocket, ":" + client.servername + " 482 " + server.channels[i].channelName + ERR_CHANOPRIVSNEEDED);
+        return ;
+    }
+    j = 0;
+    while ((server.channels[i].users.size() - 1) != j)
+    {
+        if (server.channels[i].users[j].nickname == buffer[2])
+            break ;
+        j++;
+    }
+    if (j == server.clients.size())
+    {
+        sendirc(client.clientSocket, ":" + client.servername + " 441 " + client.nickname + " " + server.channels[i].channelName + ERR_USERONCHANNEL);
         return ;
     }
     if (!tmp.empty())
@@ -65,68 +79,117 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 
 void    Server::invite_chan(Client &client, int arg, std::vector<std::string> buffer)
 {
-    int i = 0;
-    int count = 0;
+    unsigned long i = 0;
+    unsigned long j = 0;
 
     if (arg != 3)
     {
-        std::cout << "<commande> :Not enough parameters" << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + ERR_NEEDMOREPARAMS);
         return ;
     }
-    if (client.op != 1)
+    while (i != (server.channels.size() - 1))
     {
-        std::cout << "<canal> :You're not channel operator" << std::endl;
-        return ;
-    }
-    count = server.clients.size();
-    while (!server.clients[i].nickname.empty())
-    {
-        if (server.clients[i].nickname == buffer[1])
+        if (server.channels[i].channelName == buffer[2])
             break ;
         i++;
     }
-    std::cout << "invite : i = " << i << std::endl;
-    if (i == count)
+    if (i == server.channels.size())
     {
-        std::cout << "<pseudonyme> :No such nick/channel" << std::endl;
-        return ; 
+        sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
+        return ;
     }
-    sendirc(server.clients[i].clientSocket, ":" + client.nickname + " INVITE " + buffer[1] + " " + buffer[2]);
-    std::cout << ":" + client.nickname  + " INVITE " + buffer[1] + " " + buffer[2] << std::endl;
+    while (j != (server.channels[i].op.size() - 1))
+    {
+        if (server.channels[i].op[j] == client.nickname)
+            break ;
+        j++;
+    }
+    if (j == server.channels[i].op[j].size())
+    {
+        sendirc(client.clientSocket, ":" + client.servername + " 482 " + server.channels[i].channelName + ERR_CHANOPRIVSNEEDED);
+        return ;
+    }
+    j = 0;
+    while (j != (server.channels[i].users.size() - 1))
+    {
+        if (server.channels[i].users[j].nickname == buffer[1])
+        {
+            sendirc(client.clientSocket, ":" + client.servername + " 443 " + client.nickname + " " + server.channels[i].channelName + ERR_USERONCHANNEL);
+            return ;
+        }
+        j++;
+    }
+    j = 0;
+    while (j != (server.clients.size() - 1))
+    {
+        if (server.clients[j].nickname == buffer[1])
+            break ;
+        j++;
+    }
+    if (i == server.clients.size())
+    {
+        sendirc(client.clientSocket, ":" + client.servername + " 401 " + client.nickname + ERR_NOSUCHNICK);
+        return ;
+    }
+    sendirc(server.clients[j].clientSocket, ":" + client.nickname + " INVITE " + buffer[1] + " " + buffer[2]);
+    sendirc(client.clientSocket, ":" + client.servername + " 341 " + client.nickname + " " + buffer[1] + " " + server.channels[i].channelName);
+    //std::cout << ":" + client.nickname  + " INVITE " + buffer[1] + " " + buffer[2] << std::endl;
+}
+
+void    Server::update_topic(std::vector<std::string> buffer, unsigned long i)
+{
+    unsigned long j = 0;
+
+    while (j != server.channels[i].users.size())
+    {
+        sendirc(server.channels[i].users[j].clientSocket, ":" + server.channels[i].users[j].servername + " 332 " + server.channels[i].users[j].nickname + " " + server.channels[i].channelName + " :" + server.channels[i].subject);
+        j++;
+    }
 }
 
 void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg, std::vector<std::string> buffer)
 {
-    int i = 0;
-    int count = 0;
+    unsigned long i = 0;
+    unsigned long j = 0;
 
-    if (arg < 2 || arg > 3)
+    if (tmp.empty() && arg != 1 && arg != 2)
     {
-        std::cout << "<commande> :Not enough parameters" << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + ERR_NEEDMOREPARAMS);
         return ;
     }
-    count = server.channels[i].channelName.size();
-    while (!server.channels[i].channelName.empty())
+    while (server.channels.size() != i)
     {
         if (server.channels[i].channelName == buffer[1])
             break ;
         i++;
     }
-    if (i == count)
+    if (i == server.channels.size())
     {
+        sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
+        return ;
+    }
+    while (j != server.channels[i].op.size())
+    {
+        if (server.channels[i].op[j] == client.nickname)
+            break ;
+        j++;
+    } 
+    if (j == server.channels.size())
+    {
+        sendirc(client.clientSocket, ":" + client.servername + " 482 " + server.channels[i].channelName + ERR_CHANOPRIVSNEEDED);
         return ;
     }
     if (!tmp.empty())
     {
         server.channels[i].subject = buffer[2];
         sendirc(client.clientSocket, ":" + client.username + " TOPIC " + buffer[1] + " :" + buffer[2]);
+        update_topic(buffer, i);
     }
     else
     {
-        std::cout << "PASS" << std::endl;
         if (!channels[i].subject.empty())
             sendirc(client.clientSocket, ":" + client.servername + " 332 " + client.nickname + " " + server.channels[i].channelName + " :" + server.channels[i].subject);
         else
             sendirc(client.clientSocket, ":" + client.servername + " 331 " + client.nickname + " " + server.channels[i].channelName + " :No topic is set");
-    }   
+    }
 }
