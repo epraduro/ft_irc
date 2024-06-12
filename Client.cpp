@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 20:41:12 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/12 12:50:41 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,30 +128,46 @@ void	Client::newnickname(std::vector<std::string> str, Server server)
 	}
 	if (!nickname.empty())
 	{
+		temp = nickname;
+		std::cout << "PASS-1" << std::endl;
 		for (unsigned long i = 0; i < server.channels.size(); i++)
 		{
+			std::cout << "PASS0" << std::endl;
 			for (unsigned long j = 0; j < server.channels[i].users.size(); j++)
 			{
-				if (server.channels[i].users[j].nickname == str[1])
+				if (server.channels[i].users[j].nickname == temp)
+				{
+					std::cout << "PASS1" << std::endl;
 					server.channels[i].users[j].nickname = str[1];
+				}
 			}
 			for (unsigned long j = 0; j < server.channels[i].op.size(); j++)
 			{
-				if (server.channels[i].op[j] == str[1])
+				if (server.channels[i].op[j] == temp)
+				{
+					std::cout << "PASS2" << std::endl;
 					server.channels[i].op[j] = str[1];
+				}
 			}
 		}
 		for (unsigned long l = 0; l < server.clients.size(); l++)
 		{
+			std::cout << "PASS-2" << std::endl;
 			for (unsigned long k = 0; k < server.clients[l].inConv.size(); k++)
 			{
-				if (server.clients[l].inConv[k] == str[1])
+				if (server.clients[l].inConv[k] == temp)
+				{
+					std::cout << "PASS3" << std::endl;
+					sendirc(server.clients[l].clientSocket, ":" + temp + " NICK " + str[1]);
 					server.clients[l].inConv[k] = str[1];
+				}
 			}
-			if (server.clients[l].nickname == str[1])
+			if (server.clients[l].nickname == temp)
+			{
+				std::cout << "PASS4" << std::endl;
 				server.clients[l].nickname = str[1];
+			}
 		}
-		temp = nickname;
 	}
 	nickname = str[1];
 	hasNickname = 1;

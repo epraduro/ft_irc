@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/11 20:42:02 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/12 11:38:46 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
 void    Server::update_topic(std::vector<std::string> buffer, unsigned long i)
 {
     unsigned long j = 0;
+    (void)buffer;
 
     while (j != server.channels[i].users.size())
     {
