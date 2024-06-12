@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/12 11:38:46 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/12 13:55:06 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 
     if (arg < 3 || arg > 4)
     {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 TOPIC" + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 KICK" + ERR_NEEDMOREPARAMS);
         return ;
     }  
     while ((server.channels.size() - 1) != i)
@@ -68,7 +68,7 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
     }
     if (j == server.clients.size())
     {
-        sendirc(client.clientSocket, ":" + client.servername + " 441 " + client.nickname + " " + server.channels[i].channelName + ERR_USERONCHANNEL);
+        sendirc(client.clientSocket, ":" + client.servername + " 441 " + client.nickname + " " + server.channels[i].channelName + ERR_USERNOTINCHANNEL);
         return ;
     }
     if (!tmp.empty())
@@ -84,7 +84,7 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
 
     if (arg != 3)
     {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 INVITE" + ERR_NEEDMOREPARAMS);
         return ;
     }
     while (i != (server.channels.size() - 1))
@@ -93,11 +93,18 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
             break ;
         i++;
     }
-    if (i == server.channels.size())
+    while (j != server.channels[i].users.size())
+    {
+        if (server.channels[i].users[j] == client.nickname)
+            break ;
+        j++;
+    }
+    if (j == server.channels[i].users.size())
     {
         sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
         return ;
     }
+    j = 0;
     while (j != (server.channels[i].op.size() - 1))
     {
         if (server.channels[i].op[j] == client.nickname)
@@ -128,7 +135,7 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
     }
     if (i == server.clients.size())
     {
-        sendirc(client.clientSocket, ":" + client.servername + " 401 " + client.nickname + ERR_NOSUCHNICK);
+        sendirc(client.clientSocket, ":" + client.servername + " 401 " + buffer[1] + ERR_NOSUCHNICK);
         return ;
     }
     sendirc(server.clients[j].clientSocket, ":" + client.nickname + " INVITE " + buffer[1] + " " + buffer[2]);
@@ -141,11 +148,16 @@ void    Server::update_topic(std::vector<std::string> buffer, unsigned long i)
     unsigned long j = 0;
     (void)buffer;
 
-    while (j != server.channels[i].users.size())
+    while (j != (server.channels[i].users.size() - 1))
     {
         sendirc(server.channels[i].users[j].clientSocket, ":" + server.channels[i].users[j].servername + " 332 " + server.channels[i].users[j].nickname + " " + server.channels[i].channelName + " :" + server.channels[i].subject);
         j++;
     }
+}
+
+int     setup_time()
+{
+    
 }
 
 void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg, std::vector<std::string> buffer)
@@ -153,12 +165,12 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
     unsigned long i = 0;
     unsigned long j = 0;
 
-    if (tmp.empty() && arg != 1 && arg != 2)
+    if (tmp.empty() && arg != 2 && arg != 3)
     {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 TOPIC" + ERR_NEEDMOREPARAMS);
         return ;
     }
-    while (server.channels.size() != i)
+    while ((server.channels.size() - 1) != i)
     {
         if (server.channels[i].channelName == buffer[1])
             break ;
@@ -166,10 +178,22 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
     }
     if (i == server.channels.size())
     {
+        sendirc(client.clientSocket, ":" + client.servername + " 403 " + server.channels[i].channelName + ERR_NOSUCHCHANNEL);
+        return ;
+    }
+    while (j != (server.channels[i].users.size() - 1))
+    {
+        if (server.channels[i].users[j] == client.nickname)
+            break ;
+        j++;
+    }
+    if (j == server.channels[i].users.size())
+    {
         sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
         return ;
     }
-    while (j != server.channels[i].op.size())
+    j = 0;
+    while (j != (server.channels[i].op.size() - 1))
     {
         if (server.channels[i].op[j] == client.nickname)
             break ;
