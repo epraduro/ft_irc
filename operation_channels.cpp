@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/12 13:55:06 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/12 14:02:19 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
     }
     while (j != server.channels[i].users.size())
     {
-        if (server.channels[i].users[j] == client.nickname)
+        if (server.channels[i].users[j].nickname == client.nickname)
             break ;
         j++;
     }
@@ -155,11 +155,6 @@ void    Server::update_topic(std::vector<std::string> buffer, unsigned long i)
     }
 }
 
-int     setup_time()
-{
-    
-}
-
 void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg, std::vector<std::string> buffer)
 {
     unsigned long i = 0;
@@ -183,7 +178,7 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
     }
     while (j != (server.channels[i].users.size() - 1))
     {
-        if (server.channels[i].users[j] == client.nickname)
+        if (server.channels[i].users[j].nickname == client.nickname)
             break ;
         j++;
     }
