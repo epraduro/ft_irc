@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 12:50:41 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:39:47 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,16 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		{
 			if (server.channels[i].channelName == str[1])
 			{
+				if (!server.channels[i].password_channel.empty() && str.size() >= 3 && str[2] != server.channels[i].password_channel) {
+					std::cout << "prbl1" << std::endl;
+					return ;
+				}
+				if (server.channels[i].limit_user && server.channels[i].users.size() > server.channels[i].limit_user) {
+					std::cout << "prbl2" << std::endl;
+					return;
+				}
+				//sur invite et pas invite
+					// return ;
 				server.channels[i].users.push_back(*this);
 				joinChannel(*this, server.channels[i].channelName);
 				server.topic_chan(tmp, *this, str.size(), str);
@@ -317,7 +327,15 @@ void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::
 {
 	(void)server;
 
-	int i = str.size(); 
+	int i = str.size();
+	unsigned long j = 0;
+	
+	while (j < server.channels.size())
+	{
+		if (!str[1].empty() && server.channels[j].channelName == str[1])
+			break;
+		j++;
+	}
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);
@@ -330,6 +348,8 @@ void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::
 	}
 	if (str[0] == "JOIN")
 		createChannel(str, tmp);
+	if (str[0] == "MODE")
+		server.channels[j].setMode(str, server);
 	if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
     if (str[0] == "INVITE")

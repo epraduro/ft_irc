@@ -76,6 +76,7 @@ void	Server::routine()
 {
 	int pollret;
 	pollfd tmp;
+	Channel channel;
 	
 	while(1)
 	{

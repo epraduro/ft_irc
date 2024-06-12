@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 22:00:17 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/12 17:20:24 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # define ERR_NOSUCHCHANNEL " :No such channel" //403
 # define ERR_USERNOTINCHANNEL " :They aren't on that channel" //441
 
+class Client;
 class Channel
 {
 	protected:
@@ -44,7 +45,18 @@ class Channel
 		int							ChannelSocket;
 		std::vector<std::string>	op;
 		std::string					subject;
+		unsigned int limit_user;
+    	std::string password_channel;
+		int mode_act;
+		unsigned int invite;
 		Channel(std::string name, std::string n_op, Client client);
 		Channel();
 		~Channel();
+		void    setMode(std::vector<std::string> str, Server server);
+		void    parse_mode_arg(std::string str, std::string arg, Server server);
+        void    key_channel(std::string key);
+        void    limit_channel(std::string limit);
+		void 	invite_only();
 };
+
+#include "Client.hpp"
