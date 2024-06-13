@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 14:26:53 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:52:31 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 					{
 						for (unsigned long k = 0; k < server.channels[i].users.size(); k++)
 						{
+							std::cout << "3 = " << server.channels[i].users.size() << std::endl;
 							if (server.channels[i].users[k].nickname == nickname)
 								break;
 							if (k == server.channels[i].users.size())

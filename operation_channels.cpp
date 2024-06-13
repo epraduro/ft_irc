@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/12 20:12:15 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 20:27:24 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,30 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 		return ;
 	}
 	if (!tmp.empty())
-		sendirc(client.clientSocket, ":" + client.username + " KICK " + buffer[1] + " " + buffer[2] + " :" + buffer[3]);
+		sendirc(client.clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2] + " :" + buffer[3]);
 	else
-		sendirc(client.clientSocket, ":" + client.username + " KICK " + buffer[1] + " " + buffer[2]);
+		sendirc(client.clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2]);
+	j = 0;
+	//si y a un com
+	while (j != server.channels[i].users.size())
+	{
+		if (client.nickname != server.channels[i].users[j].nickname)
+			sendirc(server.channels[i].users[j].clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2]);
+		j++;
+	}
+	std::cout << "1 = " << channels[i].users.size() << std::endl;
+	for (std::vector<Client>::iterator it = server.channels[i].users.begin(); it != server.channels[i].users.end(); ) {
+		if (it->nickname == buffer[2]) 
+		{
+			it = server.channels[i].users.erase(it);
+		} 
+		else 
+		{
+			++it;
+		}
+	}
+	std::cout << "2 = " << channels[i].users.size() << std::endl;
+	//server.channels[i].users.erase(std::remove(server.channels[i].users.begin(), server.channels[i].users.end(), buffer[2]), server.channels[i].users.end());
 }
 
 void    Server::invite_chan(Client &client, int arg, std::vector<std::string> buffer)

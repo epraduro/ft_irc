@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 18:32:02 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 14:54:42 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <csignal>
 # include"Channel.hpp"
 # include <map>
+# include <algorithm>
 
 class Client;
 class Server
