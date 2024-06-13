@@ -3,17 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 17:20:24 by epraduro         ###   ########.fr       */
-=======
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 20:10:23 by ogregoir         ###   ########.fr       */
->>>>>>> 059709b6b85d043fbf0243bcb95b84a72b042814
+/*   Updated: 2024/06/13 17:29:29 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +42,7 @@ class Channel
 	public:
 		std::string					channelName;
 		std::vector<Client>			users;
-		std::vector<std::string>	invite;
+		std::vector<std::string>	invited;
 		int							ChannelSocket;
 		std::vector<std::string>	op;
 		std::string					subject;
@@ -60,8 +53,8 @@ class Channel
 		Channel(std::string name, std::string n_op, Client client);
 		Channel();
 		~Channel();
-		void    setMode(std::vector<std::string> str, Server server);
-		void    parse_mode_arg(std::string str, std::string arg, Server server);
+		void    setMode(std::vector<std::string> str, Server &server);
+		void    parse_mode_arg(std::string str, std::string arg, Server &server);
         void    key_channel(std::string key);
         void    limit_channel(std::string limit);
 		void 	invite_only();

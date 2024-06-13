@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/06/12 17:21:34 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/13 17:29:13 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Channel::limit_channel(std::string limit) {
     if (mode_act == 1 && !limit.empty()) {
         if (users.size() <= nb) {
             limit_user = nb;
-            std::cout << "This channel is now limited to " << nb << " clients only." << users.size() << std::endl;
+            std::cout << "This channel is now limited to " << limit_user << " clients only." << users.size() << "/" << channelName << std::endl;
         }
         else { 
             limit_user = 0;
@@ -54,7 +54,7 @@ void Channel::limit_channel(std::string limit) {
     }
     else {
         if (limit_user) {
-            limit_user = 0;
+            limit_user = 50;
             std::cout << "There is no longer a client limit for this channel." << std::endl;
         }
         else
@@ -74,7 +74,7 @@ void Channel::invite_only() {
     }
 }
 
-void Channel::parse_mode_arg(std::string str, std::string arg, Server server) {
+void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
     mode_act = 0;
     (void) server;
     if ((str[0] == '+' || str[0] == '-') && str.size() >= 2) {
@@ -112,7 +112,7 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server server) {
     }
 }
 
-void Channel::setMode(std::vector<std::string> str, Server server) {
+void Channel::setMode(std::vector<std::string> str, Server &server) {
 	if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
 			if (server.channels[i].channelName == str[1]) {

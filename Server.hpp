@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 18:32:02 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 13:13:59 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # include <vector>
 # include <csignal>
 # include"Channel.hpp"
-# include <map>
 
 class Client;
 class Server
@@ -42,7 +41,6 @@ class Server
     public:
         std::vector<Client> clients;
         std::vector<Channel> channels;
-        std::map<std::string, std::string> map;
         int serverSocket;
         Server(/* args */);
         Server(char **argv);

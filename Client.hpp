@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/12 14:57:21 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/13 17:28:46 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ class Client
         socklen_t addr_len;
         char buf[1];
         std::string finalbuf;
-        void    connectClient(std::string buf, std::string password, Server server);
+        void    connectClient(std::string buf, std::string password, Server &server);
         void	createChannel(std::vector<std::string> str, std::vector<std::string> tmp);
         void	verifPassword(std::vector<std::string> str, std::string password);
-        void	newnickname(std::vector<std::string> str, Server server);
+        void	newnickname(std::vector<std::string> str, Server &server);
         void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
-        void	exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp);
+        void	exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp);
         void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 };
 
