@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/13 20:27:24 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 20:28:11 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void    Server::invite_chan(Client &client, int arg, std::vector<std::string> bu
 	}
 	sendirc(server.clients[j].clientSocket, ":" + client.nickname + " INVITE " + buffer[1] + " :" + buffer[2]);
 	sendirc(client.clientSocket, ":" + client.servername + " 341 " + client.nickname + " " + buffer[1] + " " + buffer[2]);
-	server.channels[i].invite.push_back(buffer[1]);
+	server.channels[i].invited.push_back(buffer[1]);
 	j = 0;
 	while (j != server.channels[i].users.size())
 	{

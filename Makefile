@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+         #
+#    By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/08 14:24:51 by rgreiner          #+#    #+#              #
-#    Updated: 2024/06/05 17:54:00 by ogregoir         ###   ########.fr        #
+#    Updated: 2024/06/12 14:20:56 by epraduro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ SRCS    =	ft_irc.cpp \
 			Client.cpp \
 			Channel.cpp \
 			operation_channels.cpp \
+			channel_mode.cpp \
 
 OBJS    =   ${SRCS:.c=.o}
 RM      =   rm -f

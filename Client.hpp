@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 17:18:07 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/13 17:28:46 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <cstring>
 #include <vector>
 
+class Channel;
 class Server;
 class Client
 {
@@ -49,15 +50,17 @@ class Client
         socklen_t addr_len;
         char buf[1];
         std::string finalbuf;
-        void    connectClient(std::string buf, std::string password, Server server);
+        void    connectClient(std::string buf, std::string password, Server &server);
         void	createChannel(std::vector<std::string> str, std::vector<std::string> tmp);
         void	verifPassword(std::vector<std::string> str, std::string password);
-        void	newnickname(std::vector<std::string> str, Server server);
+        void	newnickname(std::vector<std::string> str, Server &server);
         void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
-        void	exec(Server server, std::vector<std::string> str, std::vector<std::string> tmp);
+        void	exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp);
         void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
 std::string trim(const std::string& str);
 void    sendirc(int clientSocket, const std::string& msg);
+
+#include "Channel.hpp"
