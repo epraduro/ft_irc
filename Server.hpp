@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:16:27 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/11 17:50:50 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:32:02 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <iostream>
-# include "iostream"
 # include "poll.h"
 # include "string"
 # include "sstream"
@@ -29,6 +28,7 @@
 # include <vector>
 # include <csignal>
 # include"Channel.hpp"
+# include <map>
 
 class Client;
 class Server
@@ -42,6 +42,7 @@ class Server
     public:
         std::vector<Client> clients;
         std::vector<Channel> channels;
+        std::map<std::string, std::string> map;
         int serverSocket;
         Server(/* args */);
         Server(char **argv);

@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
 /*   Updated: 2024/06/12 17:39:47 by epraduro         ###   ########.fr       */
+=======
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
+/*   Updated: 2024/06/12 14:26:53 by ogregoir         ###   ########.fr       */
+>>>>>>> 059709b6b85d043fbf0243bcb95b84a72b042814
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,6 +335,7 @@ void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::
 	(void)server;
 
 	int i = str.size();
+<<<<<<< HEAD
 	unsigned long j = 0;
 	
 	while (j < server.channels.size())
@@ -336,6 +344,8 @@ void	Client::exec(Server server, std::vector<std::string> str, std::vector<std::
 			break;
 		j++;
 	}
+=======
+>>>>>>> 059709b6b85d043fbf0243bcb95b84a72b042814
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);

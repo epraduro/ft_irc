@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
 /*   Updated: 2024/06/12 17:20:24 by epraduro         ###   ########.fr       */
+=======
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
+/*   Updated: 2024/06/12 20:10:23 by ogregoir         ###   ########.fr       */
+>>>>>>> 059709b6b85d043fbf0243bcb95b84a72b042814
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +49,7 @@ class Channel
 	public:
 		std::string					channelName;
 		std::vector<Client>			users;
+		std::vector<std::string>	invite;
 		int							ChannelSocket;
 		std::vector<std::string>	op;
 		std::string					subject;

@@ -48,4 +48,8 @@ Socket() return a int
         short events;     /* Événements attendus    */
         short revents;    /* Événements détectés    */
     }
+
+    -->    std::map<std::string, Client> map --> declarer
+            /*auto client = */ map.get(buffer[1]) -- > verifier si map vide
+            map.set(buffer[1], new Client()) --> creer un nouveaux client
     
