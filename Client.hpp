@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/13 17:28:46 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/17 16:39:40 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Client
         void	newusername(std::vector<std::string> str, std::vector<std::string> tmp);
         void	exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp);
         void	privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
+        int     youre_invited(int i);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);

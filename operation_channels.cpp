@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/13 20:28:11 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:24:02 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "Server.hpp"
 #include "Client.hpp"
-
 
 void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp, std::vector<std::string> buffer)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/13 17:29:29 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:04:44 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 #include"Client.hpp"
 
 # define ERR_CHANOPRIVSNEEDED " :You're not channel operator" //482
@@ -35,6 +36,7 @@
 # define ERR_USERNOTINCHANNEL " :They aren't on that channel" //441
 
 class Client;
+class Server;
 class Channel
 {
 	protected:
@@ -53,11 +55,13 @@ class Channel
 		Channel(std::string name, std::string n_op, Client client);
 		Channel();
 		~Channel();
-		void    setMode(std::vector<std::string> str, Server &server);
+		void    setMode(std::vector<std::string> str, Server &server, std::string nickname);
 		void    parse_mode_arg(std::string str, std::string arg, Server &server);
         void    key_channel(std::string key);
         void    limit_channel(std::string limit);
 		void 	invite_only();
+		int     youre_op(int i, std::string nickname);
+		void	op_privilege(std::string nickname);
 };
 
 #include "Client.hpp"

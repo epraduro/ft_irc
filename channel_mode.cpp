@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel_mode.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/06/13 17:29:13 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:07:43 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 /*
     TODO:
-        - lors de la commande join verifier si limit_user est atteint ou non
         - faire en sorte qu'uniquement les op [euvent utiliser la commande MODE
 */
 
@@ -74,6 +73,51 @@ void Channel::invite_only() {
     }
 }
 
+int Client::youre_invited(int i) {
+    unsigned long j = 0;
+	int l = 0;
+    while (j != server.channels[i].invited.size()) {
+        std::cout << server.channels[i].invited[j] << "/" << nickname << std::endl;
+        if (server.channels[i].invited[j] == nickname)
+            l = 1;
+        j++;
+    }
+    if (!l) {
+        std::cout << "tu n'as pas d'invitation" << std::endl;
+        return (-1);	
+    }
+    return (0);
+}
+
+int Channel::youre_op(int i, std::string nickname) {
+    unsigned long j = 0;
+    int op = 0;
+    while (j <= server.channels[i].op.size()) {
+        if (server.channels[i].op[j] == nickname)
+            op = 1;
+        j++;
+    }
+    if (!op) {
+        std::cout << "tu n'es pas un op" << std::endl;
+        return (-1);	
+    }
+    return (0);
+}
+
+void Channel::op_privilege(std::string nickname) {
+    if (mode_act == 1) {
+        std::cout << nickname << " has obtained the op privileges" << std::endl;
+        op.push_back(nickname);
+    }
+    else {
+        std::vector<std::string>::iterator it = std::find(op.begin(), op.end(), nickname);
+        if (it != op.end()) {
+            op.erase(it);
+            std::cout << nickname << "has lost the op privileges" << std::endl;
+        }
+    }
+}
+
 void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
     mode_act = 0;
     (void) server;
@@ -99,6 +143,7 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
                     break;
                 case 'o':
                     std::cout << "channel operator privilege is detected" << std::endl;
+                    op_privilege(arg);
                     break;
                 default:
                     std::cout << "the format of arguments is incorrect" << std::endl;
@@ -112,12 +157,15 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
     }
 }
 
-void Channel::setMode(std::vector<std::string> str, Server &server) {
+void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname) {
 	if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
 			if (server.channels[i].channelName == str[1]) {
-                if (str.size() <= 2 || str[2].empty()) {
+                if (str.size() <= 2 || str[2].empty() ) {
                     std::cout << "No channel mode" << std::endl;
+                    return ;
+                }
+                else if (youre_op(i, nickname) == -1) {
                     return ;
                 }
                 else 

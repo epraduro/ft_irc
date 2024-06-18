@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/13 20:28:20 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/17 16:38:23 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,9 +184,6 @@ void    joinChannel(Client &client, const std::string& channel)
 
 void	Client::createChannel(std::vector<std::string> str, std::vector<std::string> tmp)
 {
-	unsigned long j = 0;
-	unsigned long k = 0;
-	int l = 0;
 	if (str.size() < 2)
 	{
 		send(clientSocket, "JOIN : Not enough parameters\n", 28, 0);
@@ -211,19 +208,14 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 					std::cout << "prbl2" << std::endl;
 					return;
 				}
-				if (server.channels[i].invite) {
-					while (k != server.clients.size()) {
-						while (j != server.channels[i].users.size()) {
-							if (server.channels[i].invited[j] == server.channels[i].users[k].nickname)
-								l = 1;
-							j++;
-						}
-						k++;
-					}
-					if (!l) {
-						std::cout << "tu as pas d'invitation" << std::endl;
-						return ;	
-					}
+				if (server.channels[i].invite && server.channels[i].invited.empty()) {
+					std::cout << "ce channel est sur invitation mais personne n'a recu d'invitation" << std::endl;
+					return ;
+				}
+				if (server.channels[i].invite && !server.channels[i].invited.empty()) {
+					if (youre_invited(i) == -1)
+						return ;
+					continue;
 				}
 				server.channels[i].users.push_back(*this);
 				joinChannel(*this, server.channels[i].channelName);
@@ -365,7 +357,7 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
 	if (str[0] == "JOIN")
 		createChannel(str, tmp);
 	if (str[0] == "MODE")
-		server.channels[j].setMode(str, server);
+		server.channels[j].setMode(str, server, nickname);
 	if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
     if (str[0] == "INVITE")
