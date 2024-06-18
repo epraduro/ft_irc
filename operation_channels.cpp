@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/18 16:59:53 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/18 17:04:21 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,6 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	unsigned long i = 0;
 	unsigned long j = 0;
 
-	
 	if (tmp.empty() && arg != 2 && arg != 3)
 	{
 		sendirc(client.clientSocket, ":" + client.servername + " 461 TOPIC" + ERR_NEEDMOREPARAMS);
@@ -214,6 +213,21 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 		sendirc(client.clientSocket, ":" + client.servername + " 403 " + client.nickname + buffer[1] + ERR_NOSUCHCHANNEL);
 		return ;
 	}
+	if (server.channels[i].topic == 1)
+	{
+		while (j != (server.channels[i].op.size()))
+		{
+			if (server.channels[i].op[j] == client.nickname)
+				break ;
+			j++;
+		}
+		if (j == server.channels.size())
+		{
+			sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
+			return ;
+		}
+	}
+	j = 0;
 	while (j != (server.channels[i].users.size()))
 	{
 		if (server.channels[i].users[j].nickname == client.nickname)
