@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:22:51 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/13 17:22:58 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 16:51:45 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,5 @@ Channel::Channel(std::string name, std::string n_op, Client client)
     limit_user = 50;
     mode_act = 0;
     invite = 0;
+    topic = 0;
 }
