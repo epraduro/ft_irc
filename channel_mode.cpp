@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel_mode.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/06/17 18:07:43 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 16:59:14 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,81 +15,70 @@
 
 /*
     TODO:
-        - faire en sorte qu'uniquement les op [euvent utiliser la commande MODE
+
+        ERR_NEEDMOREPARAMS    : le client n'a pas fourni assez de paramètres (461 "<commande> :Not enough parameters")          
+        ERR_CHANOPRIVSNEEDED  : pour toute commande qui requiert d'etre op (482 "<canal> :You're not channel operator")
+        ERR_NOSUCHNICK : pseudonyme passé en paramètre à la commande n'est pas actuellement utilisé (401 "<pseudonyme> :No such nick/channel")
+        ERR_NOTONCHANNEL  : Renvoyé par le serveur quand un client essaie une commande affectant un canal dont il ne fait pas partie (442 "<canal> :You're not on that channel")       
+        ERR_KEYSET : Clé de canal déjà définie (467 "<canal> :Channel key already set")
+        ERR_UNKNOWNMODE  : Mode inconnu (472 "<caractère> :is unknown mode char to me")               
+        ERR_NOSUCHCHANNEL   :le nom de canal donné est invalide (403 "<nom de canal> :No such channel")
 */
 
-void Channel::key_channel(std::string key) {
-    if (mode_act == 1 && !key.empty()) {
+void Channel::key_channel(std::string key, Client &client, std::string commande) {
+    (void) client;
+    if (mode_act == 1 && !key.empty())
         password_channel = key;
-        std::cout << "the password of this channel is: " << password_channel << std::endl;
-    }
     else if (mode_act == 1 && key.empty()) {
-        std::cout << "This mode need a key for the channel." << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
         return ;
     }
-    else {
-        std::cout << "the channel key is removed" << std::endl;
+    else
         password_channel.erase();
-        std::cout << "actually the password is:" << password_channel << "/" << std::endl;
-    }
 }
 
-void Channel::limit_channel(std::string limit) {
+void Channel::limit_channel(std::string limit, Client &client, std::string commande) {
     unsigned long nb = strtoul(limit.c_str(), 0, 0);
     if (mode_act == 1 && !limit.empty()) {
-        if (users.size() <= nb) {
+        if (users.size() <= nb)
             limit_user = nb;
-            std::cout << "This channel is now limited to " << limit_user << " clients only." << users.size() << "/" << channelName << std::endl;
-        }
-        else { 
+        else
             limit_user = 0;
-            std::cout << "There are " << users.size() << "people in this channel, making it impossible to enforce this limit." << std::endl;
-        }
         return ;
     }
     else if (mode_act == 1 && limit.empty()) {
-        std::cout << "This mode need a number for the user limit." << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
         return ;
     }
     else {
-        if (limit_user) {
-            limit_user = 50;
-            std::cout << "There is no longer a client limit for this channel." << std::endl;
-        }
-        else
-            std::cout << "There was no limit for this channel." << std::endl;
+        if (limit_user)
+            limit_user = 0;
         return ;
     }
 }
 
 void Channel::invite_only() {
-    if (mode_act == 1) {
-        std::cout << "Acces to the channel now requires an invitation" << std::endl;
+    if (mode_act == 1)
         invite = 1;
-    }
-    else {
-        std::cout << "channel sur libre acces" << std::endl;
+    else
         invite = 0;
-    }
 }
 
 int Client::youre_invited(int i) {
     unsigned long j = 0;
 	int l = 0;
     while (j != server.channels[i].invited.size()) {
-        std::cout << server.channels[i].invited[j] << "/" << nickname << std::endl;
         if (server.channels[i].invited[j] == nickname)
             l = 1;
         j++;
     }
-    if (!l) {
-        std::cout << "tu n'as pas d'invitation" << std::endl;
+    if (!l)
         return (-1);	
-    }
     return (0);
 }
 
-int Channel::youre_op(int i, std::string nickname) {
+int Channel::youre_op(int i, std::string nickname, Client &client) {
+    (void) client;
     unsigned long j = 0;
     int op = 0;
     while (j <= server.channels[i].op.size()) {
@@ -98,27 +87,34 @@ int Channel::youre_op(int i, std::string nickname) {
         j++;
     }
     if (!op) {
-        std::cout << "tu n'es pas un op" << std::endl;
         return (-1);	
     }
     return (0);
 }
 
-void Channel::op_privilege(std::string nickname) {
-    if (mode_act == 1) {
-        std::cout << nickname << " has obtained the op privileges" << std::endl;
+void Channel::op_privilege(std::string nickname, Client &client, std::string commande) {
+    (void) client;
+    if (mode_act == 1 && !nickname.empty())
         op.push_back(nickname);
+    else if (mode_act == 1 && nickname.empty()) {
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
+        return ;
     }
     else {
         std::vector<std::string>::iterator it = std::find(op.begin(), op.end(), nickname);
-        if (it != op.end()) {
+        if (it != op.end())
             op.erase(it);
-            std::cout << nickname << "has lost the op privileges" << std::endl;
-        }
     }
 }
 
-void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
+void Channel::topic_op_chann() {
+    if (mode_act == 1)
+        topic = 1;
+    else
+        topic = 0;
+}
+
+void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, Client &client, std::string commande) {
     mode_act = 0;
     (void) server;
     if ((str[0] == '+' || str[0] == '-') && str.size() >= 2) {
@@ -126,27 +122,24 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
             if (str[0] == '+')
                 mode_act = 1;
             switch(str[i]) {
-                case 'i': 
-                    std::cout << "invite-only is detected" << std::endl;
+                case 'i':
                     invite_only();
                     break;
                 case 't':
                     std::cout << "the restrictions of the TOPIC command is detected" << std::endl;
+                    topic_op_chann();
                     break;
                 case 'k':
-                    std::cout << "the channel key is detected" << std::endl;
-                    key_channel(arg);
+                    key_channel(arg, client, commande);
                     break;
                 case 'l':
-                    std::cout << "the user limit to channel is detected" << std::endl;
-                    limit_channel(arg);
+                    limit_channel(arg, client, commande);
                     break;
                 case 'o':
-                    std::cout << "channel operator privilege is detected" << std::endl;
-                    op_privilege(arg);
+                    op_privilege(arg, client, commande);
                     break;
                 default:
-                    std::cout << "the format of arguments is incorrect" << std::endl;
+                    sendirc(client.clientSocket, ":" + client.servername + " 472 " + commande + ERR_UNKNOWNMODE);
                     break;
             }
         }
@@ -157,7 +150,7 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server) {
     }
 }
 
-void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname) {
+void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
 	if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
 			if (server.channels[i].channelName == str[1]) {
@@ -165,11 +158,11 @@ void Channel::setMode(std::vector<std::string> str, Server &server, std::string 
                     std::cout << "No channel mode" << std::endl;
                     return ;
                 }
-                else if (youre_op(i, nickname) == -1) {
+                else if (youre_op(i, nickname, client) == -1) {
                     return ;
                 }
                 else 
-                    parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server);   //str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
+                    parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server, client, str[0]);   //str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
 			    return ;
             }
 		}

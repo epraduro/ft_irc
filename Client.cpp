@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/17 16:38:23 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 15:25:07 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,7 +334,6 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp)
 {
 	(void)server;
-
 	int i = str.size();
 	unsigned long j = 0;
 	
@@ -357,7 +356,7 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
 	if (str[0] == "JOIN")
 		createChannel(str, tmp);
 	if (str[0] == "MODE")
-		server.channels[j].setMode(str, server, nickname);
+		server.channels[j].setMode(str, server, nickname, *this);
 	if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
     if (str[0] == "INVITE")
