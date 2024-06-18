@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/17 18:24:02 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 16:59:53 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,23 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 	else
 		sendirc(client.clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2]);
 	j = 0;
-	//si y a un com
-	while (j != server.channels[i].users.size())
+	if (!tmp.empty())
 	{
-		if (client.nickname != server.channels[i].users[j].nickname)
-			sendirc(server.channels[i].users[j].clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2]);
-		j++;
+		while (j != server.channels[i].users.size())
+		{
+			if (client.nickname != server.channels[i].users[j].nickname)
+				sendirc(server.channels[i].users[j].clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2] + " " + buffer[3]);
+			j++;
+		}
+	}
+	else
+	{
+		while (j != server.channels[i].users.size())
+		{
+			if (client.nickname != server.channels[i].users[j].nickname)
+				sendirc(server.channels[i].users[j].clientSocket, ":" + client.nickname + " KICK " + buffer[1] + " " + buffer[2]);
+			j++;
+		}
 	}
 	std::cout << "1 = " << channels[i].users.size() << std::endl;
 	for (std::vector<Client>::iterator it = server.channels[i].users.begin(); it != server.channels[i].users.end(); ) {
@@ -186,12 +197,13 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	unsigned long i = 0;
 	unsigned long j = 0;
 
+	
 	if (tmp.empty() && arg != 2 && arg != 3)
 	{
 		sendirc(client.clientSocket, ":" + client.servername + " 461 TOPIC" + ERR_NEEDMOREPARAMS);
 		return ;
 	}
-	while ((server.channels.size() - 1) != i)
+	while ((server.channels.size()) != i)
 	{
 		if (server.channels[i].channelName == buffer[1])
 			break ;
@@ -199,10 +211,10 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	}
 	if (i == server.channels.size())
 	{
-		sendirc(client.clientSocket, ":" + client.servername + " 403 " + server.channels[i].channelName + ERR_NOSUCHCHANNEL);
+		sendirc(client.clientSocket, ":" + client.servername + " 403 " + client.nickname + buffer[1] + ERR_NOSUCHCHANNEL);
 		return ;
 	}
-	while (j != (server.channels[i].users.size() - 1))
+	while (j != (server.channels[i].users.size()))
 	{
 		if (server.channels[i].users[j].nickname == client.nickname)
 			break ;
@@ -210,11 +222,11 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	}
 	if (j == server.channels[i].users.size())
 	{
-		sendirc(client.clientSocket, ":" + client.servername + " 442 " + server.channels[i].channelName + ERR_NOTONCHANNEL);
+		sendirc(client.clientSocket, ":" + client.servername + " 442 " + buffer[1] + ERR_NOTONCHANNEL);
 		return ;
 	}
 	j = 0;
-	while (j != (server.channels[i].op.size() - 1))
+	while (j != (server.channels[i].op.size()))
 	{
 		if (server.channels[i].op[j] == client.nickname)
 			break ;
@@ -222,7 +234,7 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	} 
 	if (j == server.channels.size())
 	{
-		sendirc(client.clientSocket, ":" + client.servername + " 482 " + server.channels[i].channelName + ERR_CHANOPRIVSNEEDED);
+		sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
 		return ;
 	}
 	if (!tmp.empty())
