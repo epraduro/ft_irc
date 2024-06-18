@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/06/18 16:59:14 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:28:37 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Channel::key_channel(std::string key, Client &client, std::string commande)
     if (mode_act == 1 && !key.empty())
         password_channel = key;
     else if (mode_act == 1 && key.empty()) {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + commande + ERR_NEEDMOREPARAMS);
         return ;
     }
     else
@@ -47,7 +47,7 @@ void Channel::limit_channel(std::string limit, Client &client, std::string comma
         return ;
     }
     else if (mode_act == 1 && limit.empty()) {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + " " + commande + " " + ERR_NEEDMOREPARAMS);
         return ;
     }
     else {
@@ -94,16 +94,20 @@ int Channel::youre_op(int i, std::string nickname, Client &client) {
 
 void Channel::op_privilege(std::string nickname, Client &client, std::string commande) {
     (void) client;
-    if (mode_act == 1 && !nickname.empty())
-        op.push_back(nickname);
+    if (mode_act == 1 && !nickname.empty()) {
+		op.push_back(nickname);
+		operators = 1;
+	}
     else if (mode_act == 1 && nickname.empty()) {
-        sendirc(client.clientSocket, ":" + client.servername + " 461 " + commande + ERR_NEEDMOREPARAMS);
+        sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + " " + commande + " " + ERR_NEEDMOREPARAMS);
         return ;
     }
     else {
         std::vector<std::string>::iterator it = std::find(op.begin(), op.end(), nickname);
-        if (it != op.end())
-            op.erase(it);
+        if (it != op.end()) {
+			op.erase(it);
+			operators = 0;
+		}
     }
 }
 
@@ -126,7 +130,6 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
                     invite_only();
                     break;
                 case 't':
-                    std::cout << "the restrictions of the TOPIC command is detected" << std::endl;
                     topic_op_chann();
                     break;
                 case 'k':
@@ -139,23 +142,38 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
                     op_privilege(arg, client, commande);
                     break;
                 default:
-                    sendirc(client.clientSocket, ":" + client.servername + " 472 " + commande + ERR_UNKNOWNMODE);
+                    sendirc(client.clientSocket, ":" + client.servername + " 501 " + client.nickname + " :Unknown MODE flag");
                     break;
             }
         }
     }
     else {
-        std::cout << "the arguments for the channel modes are incorrect" << std::endl;
+        sendirc(client.clientSocket, ":" + client.servername + " 501 " + client.nickname + " :Unknown MODE flag");
         return ;
     }
 }
 
 void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
-	if (server.channels.size() >= 1) {
+    std::string modes;
+    if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
 			if (server.channels[i].channelName == str[1]) {
                 if (str.size() <= 2 || str[2].empty() ) {
-                    std::cout << "No channel mode" << std::endl;
+					modes += "+";
+                    if (mode_act) {
+                    	if (limit_user)
+                    		modes += "l";
+						if (invite)
+							modes += "i";
+						if (topic)
+							modes += "t";
+						if (!password_channel.empty())
+							modes += "k";
+						if (operators)
+							modes += "o";
+                    }
+					// si mode_act = 0 supprimer les modes qui sont conserne dans la chaine modes
+					sendirc(client.clientSocket, ":" + client.servername + " 324 " + client.nickname + " " + server.channels[i].channelName + " " + modes);
                     return ;
                 }
                 else if (youre_op(i, nickname, client) == -1) {

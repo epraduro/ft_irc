@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:22:51 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/18 16:51:45 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 18:53:12 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ Channel::Channel(std::string name, std::string n_op, Client client)
     ChannelSocket = socket(AF_INET, SOCK_STREAM, 0);
     channelName = name;
     op.push_back(n_op);
-    limit_user = 50;
+    limit_user = 0;
     mode_act = 0;
     invite = 0;
     topic = 0;
+    operators = 0;
 }
