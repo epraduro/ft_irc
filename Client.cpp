@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/18 15:25:07 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/18 18:13:40 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,6 +365,8 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
         server.topic_chan(tmp, *this, i, str);
     else if (str[0] == "KICK")
         server.kick_chan(i, *this, tmp, str);
+	else if (str[0] == "PART")
+		server.part_chan(*this, i, str);
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server &server)
