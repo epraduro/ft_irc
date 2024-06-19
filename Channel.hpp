@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 15:31:27 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/19 17:07:34 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,23 @@ class Channel
 		int							ChannelSocket;
 		std::vector<std::string>	op;
 		std::string					subject;
-		unsigned int limit_user;
-    	std::string password_channel;
-		int mode_act;
-		unsigned int invite;
-		int topic;
-		unsigned int operators;
+		unsigned int 				limit_user;
+    	std::string 				password_channel;
+		int 						mode_act;
+		unsigned int 				invite;
+		int 						topic;
+		unsigned int 				operators;
 		Channel(std::string name, std::string n_op, Client client);
 		Channel();
 		~Channel();
-		void    setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client);
-		void    parse_mode_arg(std::string str, std::string arg, Server &server, Client &client, std::string commande);
-        void    key_channel(std::string key, Client &client, std::string commande);
-        void    limit_channel(std::string limit, Client &client, std::string commande);
-		void 	invite_only();
-		int     youre_op(int i, std::string , Client &clientnickname);
-		void	op_privilege(std::string nickname, Client &client, std::string commande);
-		void 	topic_op_chann();
+		void    					setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client);
+		void    					parse_mode_arg(std::string str, std::string arg, Server &server, Client &client, std::string commande);
+        void   						key_channel(std::string key, Client &client, std::string commande);
+        void    					limit_channel(std::string limit, Client &client, std::string commande);
+		void 						invite_only();
+		int     					youre_op(int i, std::string , Client &clientnickname);
+		void						op_privilege(std::string nickname, Client &client, std::string commande);
+		void 						topic_op_chann();
 };
 
 #include "Client.hpp"

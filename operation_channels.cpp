@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/18 20:07:59 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/19 17:05:40 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 		sendirc(client.clientSocket, ":" + client.servername + " 403 " + client.nickname + buffer[1] + ERR_NOSUCHCHANNEL);
 		return ;
 	}
-	if (server.channels[i].topic == 1)
+	if (server.channels[i].topic > 0)
 	{
 		while (j != (server.channels[i].op.size()))
 		{
