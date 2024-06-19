@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 18:55:28 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/19 18:56:45 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ class Client
 		void						exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp);
 		void						privateMessage(std::vector<std::string> str, std::vector<std::string> tmp);
 		int							youre_invited(int i);
+        void	                    modifynickname(std::string str);
 };
 
 std::vector<std::string> split (const std::string &s, char delim);
