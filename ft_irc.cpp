@@ -58,7 +58,7 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 			else 
 				++it;
 	}
-	/*for (unsigned int i = 0; i < channels.size(); i++)
+	for (unsigned int i = 0; i < channels.size(); i++)
 	{
 		for (std::vector<Client>::iterator it = channels[i].users.begin(); it != channels[i].users.end();)
 		{
@@ -69,11 +69,16 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 			else 
 				++it;
 		}
-		channels[i].op.erase(std::find(channels[i].op.begin(), channels[i].op.end(), clientName));
-		channels[i].invited.erase(std::find(channels[i].invited.begin(), channels[i].invited.end(), clientName));
+		if (!channels[i].op.empty())
+			channels[i].op.erase(std::find(channels[i].op.begin(), channels[i].op.end(), clientName));
+		if (!channels[i].invited.empty())
+			channels[i].invited.erase(std::find(channels[i].invited.begin(), channels[i].invited.end(), clientName));
 	}
 	for (unsigned int i = 0; i < clients.size(); i++)
-		clients[i].inConv.erase(std::find(clients[i].inConv.begin(), clients[i].inConv.end(), clientName));*/
+	{
+		if (!clients[i].inConv.empty())
+			clients[i].inConv.erase(std::find(clients[i].inConv.begin(), clients[i].inConv.end(), clientName));
+	}
 	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end();)
 	{
 		if (it->nickname == clientName){

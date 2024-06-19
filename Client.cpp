@@ -289,7 +289,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 							}
 						}
 					}
-				if (sent == 0 && i == server.channels.size() - 1)
+				if (server.channels.size() != 1 && sent == 0 && i == server.channels.size() - 1)
 					{
 						sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
 						return ;
