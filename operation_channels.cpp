@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/18 17:04:21 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/18 20:07:59 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,19 +92,12 @@ void    Server::kick_chan(int arg, Client &client, std::vector<std::string> tmp,
 			j++;
 		}
 	}
-	std::cout << "1 = " << channels[i].users.size() << std::endl;
 	for (std::vector<Client>::iterator it = server.channels[i].users.begin(); it != server.channels[i].users.end(); ) {
-		if (it->nickname == buffer[2]) 
-		{
+		if (it->nickname == buffer[2])
 			it = server.channels[i].users.erase(it);
-		} 
 		else 
-		{
 			++it;
-		}
 	}
-	std::cout << "2 = " << channels[i].users.size() << std::endl;
-	//server.channels[i].users.erase(std::remove(server.channels[i].users.begin(), server.channels[i].users.end(), buffer[2]), server.channels[i].users.end());
 }
 
 void    Server::invite_chan(Client &client, int arg, std::vector<std::string> buffer)
@@ -185,7 +178,7 @@ void    Server::update_topic(std::vector<std::string> buffer, unsigned long i)
 	unsigned long j = 0;
 	(void)buffer;
 
-	while (j != (server.channels[i].users.size() - 1))
+	while (j != server.channels[i].users.size())
 	{
 		sendirc(server.channels[i].users[j].clientSocket, ":" + server.channels[i].users[j].servername + " 332 " + server.channels[i].users[j].nickname + " " + server.channels[i].channelName + " :" + server.channels[i].subject);
 		j++;
@@ -239,18 +232,6 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 		sendirc(client.clientSocket, ":" + client.servername + " 442 " + buffer[1] + ERR_NOTONCHANNEL);
 		return ;
 	}
-	j = 0;
-	while (j != (server.channels[i].op.size()))
-	{
-		if (server.channels[i].op[j] == client.nickname)
-			break ;
-		j++;
-	} 
-	if (j == server.channels.size())
-	{
-		sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
-		return ;
-	}
 	if (!tmp.empty())
 	{
 		server.channels[i].subject = buffer[2];
@@ -263,5 +244,77 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 			sendirc(client.clientSocket, ":" + client.servername + " 332 " + client.nickname + " " + server.channels[i].channelName + " :" + server.channels[i].subject);
 		else
 			sendirc(client.clientSocket, ":" + client.servername + " 331 " + client.nickname + " " + server.channels[i].channelName + " :No topic is set");
+	}
+}
+
+void Server::part_chan(Client &client, int arg, std::vector<std::string> buffer)
+{
+	unsigned long i;
+	unsigned long j;
+	unsigned long argbis;
+	unsigned long index = 0;
+	
+	if (arg < 2)
+	{
+		sendirc(client.clientSocket, ":" + client.servername + " 461 PART" + ERR_NEEDMOREPARAMS);
+		return ;
+	}
+	std::vector<std::string> channels = split(buffer[1], ',');
+	argbis = channels.size();
+	while (argbis)
+	{
+		i = 0;
+		j = 0;
+		while ((server.channels.size()) != i)
+		{
+			if (server.channels[i].channelName == channels[index])
+				break ;
+			i++;
+		}
+		if (i == server.channels.size())
+		{
+			sendirc(client.clientSocket, ":" + client.servername + " 403 " + client.nickname + channels[index] + ERR_NOSUCHCHANNEL);
+			return ;
+		}
+		while (j != (server.channels[i].users.size()))
+		{
+			if (server.channels[i].users[j].nickname == client.nickname)
+				break ;
+			j++;
+		}
+		if (j == server.channels[i].users.size())
+		{
+			sendirc(client.clientSocket, ":" + client.servername + " 442 " + channels[index] + ERR_NOTONCHANNEL);
+			return ;
+		}
+		for (std::vector<Client>::iterator it = server.channels[i].users.begin(); it != server.channels[i].users.end();) {
+			if (it->nickname == client.nickname)
+				it = server.channels[i].users.erase(it);
+			else
+				++it;
+		}
+		j = 0;
+		while (j != (server.channels[i].op.size()))
+		{
+			if (server.channels[i].op[j] == client.nickname)
+				break ;
+			j++;
+		}
+		for (std::vector<std::string>::iterator it = server.channels[i].op.begin(); it != server.channels[i].op.end(); ) {
+			if (*it == server.channels[i].op[j])
+				it = server.channels[i].op.erase(it);
+			else
+				++it;
+		}
+		sendirc(client.clientSocket, ":" + client.username + " PART " + channels[index] + " :" + buffer[2]);
+		j = 0;
+		while (server.channels[i].users.size() != j)
+		{
+			if (server.channels[i].users[j].nickname != client.nickname)
+				sendirc(server.channels[i].users[j].clientSocket, ":" + client.username + " PART " + channels[index] + " :" + buffer[2]);
+			j++;
+		}
+		index++;
+		argbis--;
 	}
 }
