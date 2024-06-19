@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/18 18:13:40 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/06/19 18:30:35 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,17 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 	std::cout << "nickname : " << nickname << std::endl;
 }
 
+void	Client::modifynickname(std::string str)
+{
+	nickname = str;
+}
+
+void	modifyvalue(std::string str, Client &user)
+{
+	user.modifynickname(str);
+}
+
+
 void	Client::newnickname(std::vector<std::string> str, Server &server)
 {
 	std::string	temp;
@@ -129,44 +140,39 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 	if (!nickname.empty())
 	{
 		temp = nickname;
-		std::cout << "PASS-1" << std::endl;
 		for (unsigned long i = 0; i < server.channels.size(); i++)
 		{
-			std::cout << "PASS0" << std::endl;
 			for (unsigned long j = 0; j < server.channels[i].users.size(); j++)
 			{
 				if (server.channels[i].users[j].nickname == temp)
 				{
-					std::cout << "PASS1" << std::endl;
-					server.channels[i].users[j].nickname = str[1];
+					modifyvalue(str[1], server.channels[i].users[j]);
+					std::cout << "new nick :" << server.channels[i].users[j].nickname << std::endl;
+					for(unsigned long o = 0; o < server.channels[i].users.size(); o++)
+						sendirc(server.channels[i].users[o].clientSocket, ":" + temp + " NICK " + str[1]);
 				}
 			}
 			for (unsigned long j = 0; j < server.channels[i].op.size(); j++)
 			{
 				if (server.channels[i].op[j] == temp)
 				{
-					std::cout << "PASS2" << std::endl;
 					server.channels[i].op[j] = str[1];
 				}
 			}
 		}
+		std::cout << "4" << std::endl;
 		for (unsigned long l = 0; l < server.clients.size(); l++)
 		{
-			std::cout << "PASS-2" << std::endl;
 			for (unsigned long k = 0; k < server.clients[l].inConv.size(); k++)
 			{
 				if (server.clients[l].inConv[k] == temp)
 				{
-					std::cout << "PASS3" << std::endl;
 					sendirc(server.clients[l].clientSocket, ":" + temp + " NICK " + str[1]);
 					server.clients[l].inConv[k] = str[1];
 				}
 			}
 			if (server.clients[l].nickname == temp)
-			{
-				std::cout << "PASS4" << std::endl;
-				server.clients[l].nickname = str[1];
-			}
+				modifyvalue(str[1], server.clients[l]);
 		}
 	}
 	nickname = str[1];
@@ -343,6 +349,7 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
 			break;
 		j++;
 	}
+	std::cout << "nbr clients > " << server.clients.size() << std::endl;
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);
@@ -367,6 +374,7 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
         server.kick_chan(i, *this, tmp, str);
 	else if (str[0] == "PART")
 		server.part_chan(*this, i, str);
+
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server &server)

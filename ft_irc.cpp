@@ -33,6 +33,59 @@ void    parse_argv(Server& server, char **argv)
 	}
 }
 
+void	Server::quit_Server(std::string clientName, int clientSocketcpy)
+{
+	std::cout << "clients nbr : " << clients.size() << std::endl;
+	for(unsigned long i = 0; i < clients.size() ;i++)
+	{
+		std::cout << "PASS" << std::endl;
+		if (clients[i].nickname != clientName)
+		{
+			std::cout << "PASS1" << std::endl;
+			sendirc(clients[i].clientSocket, ":" + clientName + " QUIT " + clientName);
+		}
+	}
+	for (std::vector<pollfd>::iterator it = fds.begin(); it != fds.end();)
+	{
+		if (it->fd == clientSocketcpy) 
+			{
+				std::cout << "5" << std::endl;
+				close(it->fd);
+				nfds--;
+				it = fds.erase(it);
+				break;
+			}
+			else 
+				++it;
+	}
+	for (unsigned int i = 0; i < channels.size(); i++)
+	{
+		for (std::vector<Client>::iterator it = channels[i].users.begin(); it != channels[i].users.end();)
+		{
+			if (it->nickname == clientName){
+				it = channels[i].users.erase(it);
+				std::cout << "3" << std::endl;
+			}
+			else 
+				++it;
+		}
+		channels[i].op.erase(std::find(channels[i].op.begin(), channels[i].op.end(), clientName));
+		channels[i].invited.erase(std::find(channels[i].invited.begin(), channels[i].invited.end(), clientName));
+	}
+	for (unsigned int i = 0; i < clients.size(); i++)
+		clients[i].inConv.erase(std::find(clients[i].inConv.begin(), clients[i].inConv.end(), clientName));
+	for (std::vector<Client>::iterator it = clients.begin(); it != clients.end();)
+	{
+		if (it->nickname == clientName){
+			it = clients.erase(it);
+				std::cout << "clients nbr after Quit : " << clients.size() << std::endl;
+			break;
+		}
+		else 
+			++it;
+	}
+}
+
 Server::Server(char **argv)
 {
 	pass = argv[2];
@@ -85,6 +138,7 @@ void	Server::routine()
 			{
 				clients.push_back(Client());
 				clients[nfds].clientSocket = accept(serverSocket, (struct sockaddr*)&clients[nfds].clientAddr, &clients[nfds].addr_len);
+				std::cout << "nfds :" << nfds << std::endl;
 				tmp.fd = clients[nfds].clientSocket;
 				tmp.events = POLL_OUT;
 				tmp.revents = 0;
@@ -104,6 +158,11 @@ void	Server::routine()
 					clients[i].finalbuf.append(clients[i].buf);
 					if (clients[i].buf[0] == '\n')
 					{
+						if (!clients[i].finalbuf.compare(0,4,"QUIT"))
+						{
+							server.quit_Server(clients[i].nickname, clients[i].clientSocket);
+							break;
+						}
 						clients[i].connectClient(clients[i].finalbuf.data(), pass, server);
 						clients[i].finalbuf.clear();
 					}
