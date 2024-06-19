@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/18 18:53:04 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/06/19 15:31:27 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Channel
 		int mode_act;
 		unsigned int invite;
 		int topic;
-		int operators;
+		unsigned int operators;
 		Channel(std::string name, std::string n_op, Client client);
 		Channel();
 		~Channel();
