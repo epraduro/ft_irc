@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 18:55:09 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/25 13:17:02 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 # define ERR_NICKNAMEINUSE " :Nickname is already in use" //433
 # define ERR_NORECIPIENT " :No recipient given (PRIVMSG)" //411
 # define ERR_NOTEXTTOSEND " :No text to send" //412
+# define ERR_PASSWDMISMATCH " :Password incorrect" //464
+# define ERR_UNKNOWNCOMMAND " :Unknown command" //421
 
 class Client;
 class Server;

@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 18:30:35 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/06/25 13:24:33 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Client::Client(/* args */)
 	isConnected = 0;
 	passwordVerif = 0;
 	hasNickname = 0;
+	servername = "DEFAULT";
 	hasUsername = 0;
 }
 
@@ -83,7 +84,7 @@ void	Client::verifPassword(std::vector<std::string> str, std::string password)
 		}
 		if (str[1] != password)
 		{
-			send(clientSocket, "PASS :Invalid password\n", 23, 0);
+			sendirc(clientSocket, ":" + servername + " 464 PASS" + ERR_PASSWDMISMATCH);
 			return ;
 		}
 		else
@@ -364,11 +365,11 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
 	}
 	if (str[0] == "JOIN")
 		createChannel(str, tmp);
-	if (str[0] == "MODE")
+	else if (str[0] == "MODE")
 		server.channels[j].setMode(str, server, nickname, *this);
-	if (str[0] == "PRIVMSG")
+	else if (str[0] == "PRIVMSG")
 		privateMessage(str, tmp);
-    if (str[0] == "INVITE")
+    else if (str[0] == "INVITE")
         server.invite_chan(*this, i, str);
     else if (str[0] == "TOPIC")
         server.topic_chan(tmp, *this, i, str);
@@ -376,7 +377,8 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
         server.kick_chan(i, *this, tmp, str);
 	else if (str[0] == "PART")
 		server.part_chan(*this, i, str);
-
+	else
+		sendirc(clientSocket, ":" + servername + " 421 " + str[0] + ERR_UNKNOWNCOMMAND);
 }
 
 void    Client::connectClient(std::string buf, std::string password, Server &server)
