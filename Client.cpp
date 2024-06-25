@@ -73,12 +73,12 @@ void	Client::verifPassword(std::vector<std::string> str, std::string password)
 {
 		if (passwordVerif == 1)
 		{
-			send(clientSocket, ":You may not reregister\n", 24, 0);
+			sendirc(clientSocket, ":" + servername + " 462 PASS" + ERR_ALREADYREGISTRED);
 			return ;
 		}
 		if (str.size() != 2)
 		{
-			send(clientSocket, "PASS :Not enough parameters\n", 28, 0);
+			sendirc(clientSocket, ":" + servername + " 461 PASS" + ERR_NEEDMOREPARAMS);
 			return ;
 		}
 		if (str[1] != password)
@@ -94,7 +94,7 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 {	
 	if (str.size() != 5 || tmp.empty())
 	{
-		send(clientSocket, "USER :Invalids arguments\n", 25, 0);
+		sendirc(clientSocket, ":" + servername + " 461 USER" + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 	username = str[1];
@@ -102,11 +102,6 @@ void	Client::newusername(std::vector<std::string> str, std::vector<std::string> 
 	servername = str[3];
 	realname = str[4];
 	hasUsername = 1;
-	std::cout << "user : " << username << std::endl;
-	std::cout << "host : " << hostname << std::endl;
-	std::cout << "server : " << servername << std::endl;
-	std::cout << "realname : " << realname << std::endl;
-	std::cout << "nickname : " << nickname << std::endl;
 }
 
 void	Client::modifynickname(std::string str)
@@ -126,14 +121,14 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 
 	if (str.size() != 2)
 	{
-		send(clientSocket, "NICK :Not enough parameters\n", 28, 0);
+		sendirc(clientSocket, ":" + servername + " 461 NICK" + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 	for (unsigned long i = 0; i < server.clients.size(); i++)
 	{
 		if (server.clients[i].nickname == str[1])
 		{
-			send(clientSocket, "NICK :Nickname already exist\n", 29, 0);
+			sendirc(clientSocket, ":" + servername + " 433 NICK " + str[1] + ERR_NICKNAMEINUSE);
 			return;
 		}
 	}
@@ -147,7 +142,6 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 				if (server.channels[i].users[j].nickname == temp)
 				{
 					modifyvalue(str[1], server.channels[i].users[j]);
-					std::cout << "new nick :" << server.channels[i].users[j].nickname << std::endl;
 					for(unsigned long o = 0; o < server.channels[i].users.size(); o++)
 						sendirc(server.channels[i].users[o].clientSocket, ":" + temp + " NICK " + str[1]);
 				}
@@ -160,7 +154,6 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 				}
 			}
 		}
-		std::cout << "4" << std::endl;
 		for (unsigned long l = 0; l < server.clients.size(); l++)
 		{
 			for (unsigned long k = 0; k < server.clients[l].inConv.size(); k++)
@@ -192,7 +185,7 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 {
 	if (str.size() < 2)
 	{
-		send(clientSocket, "JOIN : Not enough parameters\n", 28, 0);
+		sendirc(clientSocket, ":" + servername + " 461 JOIN" + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 	if (str[1][0] != '#')
@@ -237,7 +230,6 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			server.topic_chan(tmp, *this, str.size(), str);
-			std::cout << "channel name : " << server.channels[i].channelName << std::endl;
 			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
 	}
@@ -247,14 +239,24 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 {
 	std::vector<std::string> target;
 	int sent = 0;
+	if (str.size() == 1)
+	{
+		sendirc(clientSocket, ":" + servername + " 411 PRIVMSG" + ERR_NORECIPIENT);
+		return ;
+	}
 	if (str[1].find(",") != std::string::npos)
 		target = split(str[1].c_str(), ',');
 	else
 		target.push_back(str[1]);
-	if (str.size() < 3 || tmp.empty())
+	if (str.size() == 2 && !tmp.empty())
 	{
-		send(clientSocket, "PRIVMSG : Not enough parameters\n", 32, 0);
+		sendirc(clientSocket, ":" + servername + " 411 PRIVMSG" + ERR_NORECIPIENT);
 		return ;
+	}
+	if (tmp.empty())
+	{
+		sendirc(clientSocket, ":" + servername + " 412 PRIVMSG" + ERR_NOTEXTTOSEND);
+		return;
 	}
 	for(unsigned long j = 0; j < target.size() ;j++)
 	{

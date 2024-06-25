@@ -94,9 +94,7 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 Server::Server(char **argv)
 {
 	pass = argv[2];
-	//std::cout << "Password : " << PASS << std::endl;
 	parse_argv(*this, argv);
-	//std::cout << "PASSWORD = " << pass << std::endl;
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
 		std::cout << "coucou5" << std::endl;
@@ -163,7 +161,7 @@ void	Server::routine()
 					clients[i].finalbuf.append(clients[i].buf);
 					if (clients[i].buf[0] == '\n')
 					{
-						if (!clients[i].finalbuf.compare(0,4,"QUIT"))
+						if (!clients[i].finalbuf.compare(0, 4, "QUIT"))
 						{
 							server.quit_Server(clients[i].nickname, clients[i].clientSocket);
 							break;

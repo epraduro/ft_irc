@@ -35,6 +35,10 @@
 # define ERR_NOSUCHCHANNEL " :No such channel" //403
 # define ERR_USERNOTINCHANNEL " :They aren't on that channel" //441
 # define ERR_UNKNOWNMODE " :is unknown mode char to me" //472
+# define ERR_ALREADYREGISTRED " :You may not reregister" //462
+# define ERR_NICKNAMEINUSE " :Nickname is already in use" //433
+# define ERR_NORECIPIENT " :No recipient given (PRIVMSG)" //411
+# define ERR_NOTEXTTOSEND " :No text to send" //412
 
 class Client;
 class Server;
