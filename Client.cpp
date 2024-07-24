@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/25 13:24:33 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/07/24 19:53:43 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		send(clientSocket, "JOIN : Server name must start by a #\n", 37, 0);
 		return ;
 	}
-	if (server.channels.size() >= 1)
+	if (server.channels.size() > 1)
 	{
 		for (int i = 0; !server.channels[i].channelName.empty(); i++)
 		{
@@ -342,7 +342,6 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 
 void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std::string> tmp)
 {
-	(void)server;
 	int i = str.size();
 	unsigned long j = 0;
 	

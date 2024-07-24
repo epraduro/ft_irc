@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/25 13:17:02 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/07/24 18:31:07 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Channel
 		std::string					subject;
 		unsigned int 				limit_user;
     	std::string 				password_channel;
+		std::string					modes;
 		int 						mode_act;
 		unsigned int 				invite;
 		int 						topic;

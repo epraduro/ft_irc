@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/06/19 16:51:00 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/07/24 19:30:53 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,32 +156,32 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
 }
 
 void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
-    std::string modes;
     if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
+            std::cout << server.channels[i].modes << "\n";
 			if (server.channels[i].channelName == str[1]) {
+                std::cout << "Je passe fdp" << this->channelName << "\n";
                 if (str.size() <= 2 || str[2].empty() ) {
-					modes += "+";
-                    if (limit_user)
-                        modes += "l";
-                    if (invite)
-                        modes += "i";
-                    if (topic)
-                        modes += "t";
-                    if (!password_channel.empty())
-                        modes += "k";
-                    if (operators)
-                        modes += "o";
-                    if (!limit_user && modes.find('l'))
-                        modes.erase(std::remove(modes.begin(), modes.end(), 'l'), modes.end());
-                    if (!invite && modes.find('i'))
-                        modes.erase(std::remove(modes.begin(), modes.end(), 'i'), modes.end());
-                    if (!topic && modes.find('t'))
-                        modes.erase(std::remove(modes.begin(), modes.end(), 't'), modes.end());
-                    if (password_channel.empty() && modes.find('k'))
-                        modes.erase(std::remove(modes.begin(), modes.end(), 'k'), modes.end());
-                    if (!operators && modes.find('o'))
-                        modes.erase(std::remove(modes.begin(), modes.end(), 'o'), modes.end());
+                    if (limit_user && this->modes.find('l') == std::string::npos)
+                        this->modes += "l";
+                    if (invite && this->modes.find('i') == std::string::npos)
+                        this->modes += "i";
+                    if (topic && this->modes.find('t') == std::string::npos)
+                        this->modes += "t";
+                    if (!password_channel.empty() && this->modes.find('k') == std::string::npos)
+                        this->modes += "k";
+                    if (operators && this->modes.find('o') == std::string::npos)
+                        this->modes += "o";
+                    if (!limit_user && this->modes.find('l'))
+                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'l'), this->modes.end());
+                    if (!invite && this->modes.find('i'))
+                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'i'), this->modes.end());
+                    if (!topic && this->modes.find('t'))
+                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 't'), this->modes.end());
+                    if (password_channel.empty() && this->modes.find('k'))
+                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'k'), this->modes.end());
+                    if (!operators && this->modes.find('o'))
+                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'o'), this->modes.end());
 					sendirc(client.clientSocket, ":" + client.servername + " 324 " + client.nickname + " " + server.channels[i].channelName + " " + modes);
                     return ;
                 }

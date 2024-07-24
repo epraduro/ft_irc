@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/06/19 17:05:40 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/07/24 20:17:29 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,15 +206,16 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 		sendirc(client.clientSocket, ":" + client.servername + " 403 " + client.nickname + buffer[1] + ERR_NOSUCHCHANNEL);
 		return ;
 	}
-	if (server.channels[i].topic > 0)
+	if (server.channels[i].topic == 1)
 	{
+		// utiliser your_op a la place de la boucle de grace
 		while (j != (server.channels[i].op.size()))
 		{
 			if (server.channels[i].op[j] == client.nickname)
 				break ;
 			j++;
 		}
-		if (j == server.channels.size())
+		if (j == server.channels[i].op.size())   //modifier a la place de server.channels.size()
 		{
 			sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
 			return ;

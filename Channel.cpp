@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:22:51 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 18:28:36 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/07/24 18:42:35 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,5 @@ Channel::Channel(std::string name, std::string n_op, Client client)
     invite = 0;
     topic = 0;
     operators = 0;
+    modes = "+";
 }
