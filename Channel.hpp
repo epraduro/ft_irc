@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/25 13:17:02 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/07/30 15:03:19 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 # define ERR_NOTEXTTOSEND " :No text to send" //412
 # define ERR_PASSWDMISMATCH " :Password incorrect" //464
 # define ERR_UNKNOWNCOMMAND " :Unknown command" //421
+# define ERR_NICKCOLLISION " :Nickname collision KILL" //436
 
 class Client;
 class Server;
