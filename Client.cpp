@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/07/24 19:53:43 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/05 13:45:43 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 	{
 		if (server.clients[i].nickname == str[1])
 		{
+			std::cout << "PASS : " << nickname << std::endl;
 			sendirc(clientSocket, ":" + servername + " 433 NICK " + str[1] + ERR_NICKNAMEINUSE);
 			return;
 		}
@@ -150,9 +151,7 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 			for (unsigned long j = 0; j < server.channels[i].op.size(); j++)
 			{
 				if (server.channels[i].op[j] == temp)
-				{
 					server.channels[i].op[j] = str[1];
-				}
 			}
 		}
 		for (unsigned long l = 0; l < server.clients.size(); l++)
@@ -168,11 +167,13 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 			if (server.clients[l].nickname == temp)
 				modifyvalue(str[1], server.clients[l]);
 		}
+		sendirc(clientSocket, ":" + temp + " NICK " + str[1]);
+		hasNickname = 1;
+		return ;
 	}
 	nickname = str[1];
 	hasNickname = 1;
-	sendirc(clientSocket, ":" + temp + " NICK " + nickname);
-}
+} 
 
 void    joinChannel(Client &client, const std::string& channel)
 {
@@ -240,6 +241,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 {
 	std::vector<std::string> target;
 	int sent = 0;
+	int	foundserver = 0;
 	if (str.size() == 1)
 	{
 		sendirc(clientSocket, ":" + servername + " 411 PRIVMSG" + ERR_NORECIPIENT);
@@ -272,9 +274,9 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 			{
 				if (server.channels[i].channelName == target[j].c_str())
 					{
+						foundserver = 1;
 						for (unsigned long k = 0; k < server.channels[i].users.size(); k++)
 						{
-							std::cout << "3 = " << server.channels[i].users.size() << std::endl;
 							if (server.channels[i].users[k].nickname == nickname)
 								break;
 							if (k == server.channels[i].users.size())
@@ -284,7 +286,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 							}
 						}
 						for (unsigned long k = 0; k < server.channels[i].users.size(); k++)
-						{
+						{ 
 							if (server.channels[i].users[k].nickname != nickname)
 							{
 								sendirc(server.channels[i].users[k].clientSocket, ":" + nickname + " PRIVMSG " + server.channels[i].channelName + " :" + str[2]);
@@ -292,11 +294,11 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 							}
 						}
 					}
-				if (server.channels.size() != 1 && sent == 0 && i == server.channels.size() - 1)
-					{
-						sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
-						return ;
-					}
+				if (sent == 0 && foundserver == 0 && i == server.channels.size() - 1)
+				{
+					sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel1");
+					return ;
+				}
 			}
 		}
 		else
@@ -376,7 +378,7 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
         server.kick_chan(i, *this, tmp, str);
 	else if (str[0] == "PART")
 		server.part_chan(*this, i, str);
-	else
+	else if (str[0] != "WHO")
 		sendirc(clientSocket, ":" + servername + " 421 " + str[0] + ERR_UNKNOWNCOMMAND);
 }
 
@@ -386,6 +388,7 @@ void    Client::connectClient(std::string buf, std::string password, Server &ser
 	std::vector<std::string> tmp;
 	
 	std::cout << "buffer = " << buf << std::endl;
+	std::cout << "clientS : "<<clientSocket << std::endl;
 	if (buf.find(":") != std::string::npos)
 	{
 		tmp = split2(buf, ':');
@@ -406,8 +409,11 @@ void    Client::connectClient(std::string buf, std::string password, Server &ser
 			newusername(str, tmp);
 		else
 			exec(server, str, tmp);
-		if (hasNickname == 1 && hasUsername == 1)
+		if (hasNickname == 1 && hasUsername == 1 && isConnected == 0)
+		{
+			sendirc(clientSocket, ":server 001 " + nickname + " :Welcome to IRC server, " + nickname);
 			isConnected = 1;
+		}
 	}
 	else
 		send(clientSocket, "You didn't input the password, you must use 'PASS <password>' to be connected to the server\n", 92, 0);
