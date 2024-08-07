@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/05 13:45:57 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/06 13:33:44 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,7 +236,7 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	if (!tmp.empty())
 	{
 		server.channels[i].subject = buffer[2];
-		sendirc(client.clientSocket, ":" + client.username + " TOPIC " + buffer[1] + " :" + buffer[2]);
+		sendirc(client.clientSocket, ":" + client.nickname + " TOPIC " + buffer[1] + " :" + buffer[2]);
 		update_topic(buffer, i);
 	}
 	else
@@ -307,12 +307,12 @@ void Server::part_chan(Client &client, int arg, std::vector<std::string> buffer)
 			else
 				++it;
 		}
-		sendirc(client.clientSocket, ":" + client.username + " PART " + channels[index] + " :" + buffer[2]);
+		sendirc(client.clientSocket, ":" + client.nickname + " PART " + channels[index] + " :" + buffer[2]);
 		j = 0;
 		while (server.channels[i].users.size() != j)
 		{
 			if (server.channels[i].users[j].nickname != client.nickname)
-				sendirc(server.channels[i].users[j].clientSocket, ":" + client.username + " PART " + channels[index] + " :" + buffer[2]);
+				sendirc(server.channels[i].users[j].clientSocket, ":" + client.nickname + " PART " + channels[index] + " :" + buffer[2]);
 			j++;
 		}
 		index++;
