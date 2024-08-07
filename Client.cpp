@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/05 13:45:43 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/07 20:04:09 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ void	Client::newnickname(std::vector<std::string> str, Server &server)
 	{
 		if (server.clients[i].nickname == str[1])
 		{
-			std::cout << "PASS : " << nickname << std::endl;
 			sendirc(clientSocket, ":" + servername + " 433 NICK " + str[1] + ERR_NICKNAMEINUSE);
 			return;
 		}
@@ -195,27 +194,29 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		send(clientSocket, "JOIN : Server name must start by a #\n", 37, 0);
 		return ;
 	}
-	if (server.channels.size() > 1)
+	if (server.channels.size() >= 1)
 	{
 		for (int i = 0; !server.channels[i].channelName.empty(); i++)
 		{
 			if (server.channels[i].channelName == str[1])
 			{
-				if (!server.channels[i].password_channel.empty() && str.size() >= 3 && str[2] != server.channels[i].password_channel) {
-					std::cout << "prbl1" << std::endl;
+				if (!server.channels[i].password_channel.empty() && (str.size() < 3 || (str.size() >= 3 && str[2] != server.channels[i].password_channel))) {
+					sendirc(clientSocket, ":" + servername + " 475 : " + server.channels[i].channelName + ERR_BADCHANNELKEY);
 					return ;
 				}
-				if (server.channels[i].limit_user && server.channels[i].users.size() + 1 >= server.channels[i].limit_user) {
-					std::cout << "prbl2" << std::endl;
+				if (server.channels[i].limit_user && server.channels[i].users.size() + 1 > server.channels[i].limit_user) {
+					sendirc(clientSocket, ":" + servername + " 471 : " + server.channels[i].channelName + ERR_CHANNELISFULL);
 					return;
 				}
 				if (server.channels[i].invite && server.channels[i].invited.empty()) {
-					std::cout << "ce channel est sur invitation mais personne n'a recu d'invitation" << std::endl;
+					sendirc(clientSocket, ":" + servername + " 473 : " + server.channels[i].channelName + ERR_INVITEONLYCHAN);
 					return ;
 				}
 				if (server.channels[i].invite && !server.channels[i].invited.empty()) {
-					if (youre_invited(i) == -1)
+					if (youre_invited(i) == -1){
+						sendirc(clientSocket, ":" + servername + " 473 : " + server.channels[i].channelName + ERR_INVITEONLYCHAN);
 						return ;
+					}
 					continue;
 				}
 				server.channels[i].users.push_back(*this);
@@ -232,7 +233,6 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			server.topic_chan(tmp, *this, str.size(), str);
-			std::cout << server.channels[0].users[0].username << std::endl;
 		}	
 	}
 }
@@ -353,7 +353,6 @@ void	Client::exec(Server &server, std::vector<std::string> str, std::vector<std:
 			break;
 		j++;
 	}
-	std::cout << "nbr clients > " << server.clients.size() << std::endl;
 	if (hasNickname == 0)
 	{
 		send(clientSocket, "No nickname saved, please input a nickname by using 'NICK <newnickname>\n", 72, 0);
@@ -387,8 +386,6 @@ void    Client::connectClient(std::string buf, std::string password, Server &ser
 	std::vector<std::string> str;
 	std::vector<std::string> tmp;
 	
-	std::cout << "buffer = " << buf << std::endl;
-	std::cout << "clientS : "<<clientSocket << std::endl;
 	if (buf.find(":") != std::string::npos)
 	{
 		tmp = split2(buf, ':');
