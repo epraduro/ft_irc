@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/07/24 19:30:53 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/07 18:00:30 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,41 +29,53 @@
 
 void Channel::key_channel(std::string key, Client &client, std::string commande) {
     (void) client;
-    if (mode_act == 1 && !key.empty())
+    if (mode_act == 1 && !key.empty()) {
         password_channel = key;
+        this->modes += 'k';
+    }
+        
     else if (mode_act == 1 && key.empty()) {
         sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + commande + ERR_NEEDMOREPARAMS);
         return ;
     }
-    else
+    else {
         password_channel.erase();
+        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'k'), this->modes.end());
+    }   
 }
 
 void Channel::limit_channel(std::string limit, Client &client, std::string commande) {
     unsigned long nb = strtoul(limit.c_str(), 0, 0);
-    if (mode_act == 1 && !limit.empty()) {
-        if (users.size() <= nb)
-            limit_user = nb;
-        else
-            limit_user = 0;
-        return ;
-    }
-    else if (mode_act == 1 && limit.empty()) {
+    
+    if (mode_act == 1 && limit.empty()) {
         sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + " " + commande + " " + ERR_NEEDMOREPARAMS);
         return ;
     }
+    if (mode_act == 1) {
+        if (users.size() <= nb) {
+            limit_user = nb;
+            this->modes += 'l';
+        }  
+        return ;
+    }
     else {
-        if (limit_user)
+        if (limit_user) {
             limit_user = 0;
+            this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'l'), this->modes.end());
+        }   
         return ;
     }
 }
 
 void Channel::invite_only() {
-    if (mode_act == 1)
+    if (mode_act == 1) {
         invite = 1;
-    else
+        this->modes += 'i';
+    }   
+    else {
         invite = 0;
+        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'i'), this->modes.end());
+    }   
 }
 
 int Client::youre_invited(int i) {
@@ -99,6 +111,7 @@ void Channel::op_privilege(std::string nickname, Client &client, std::string com
     if (mode_act == 1 && !nickname.empty()) {
 		op.push_back(nickname);
 		operators++;
+        this->modes += "o";
 	}
     else if (mode_act == 1 && nickname.empty()) {
         sendirc(client.clientSocket, ":" + client.servername + " 461 " + client.nickname + " " + commande + " " + ERR_NEEDMOREPARAMS);
@@ -109,15 +122,20 @@ void Channel::op_privilege(std::string nickname, Client &client, std::string com
         if (it != op.end()) {
             op.erase(it);
             operators--;
+            this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'o'), this->modes.end());
         }
     }
 }
 
 void Channel::topic_op_chann() {
-    if (mode_act == 1)
+    if (mode_act == 1) {
         topic = 1;
-    else
+        this->modes += "t";
+    }
+    else {
         topic = 0;
+        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 't'), this->modes.end());
+    }
 }
 
 void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, Client &client, std::string commande) {
@@ -158,38 +176,16 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
 void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
     if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
-            std::cout << server.channels[i].modes << "\n";
 			if (server.channels[i].channelName == str[1]) {
-                std::cout << "Je passe fdp" << this->channelName << "\n";
                 if (str.size() <= 2 || str[2].empty() ) {
-                    if (limit_user && this->modes.find('l') == std::string::npos)
-                        this->modes += "l";
-                    if (invite && this->modes.find('i') == std::string::npos)
-                        this->modes += "i";
-                    if (topic && this->modes.find('t') == std::string::npos)
-                        this->modes += "t";
-                    if (!password_channel.empty() && this->modes.find('k') == std::string::npos)
-                        this->modes += "k";
-                    if (operators && this->modes.find('o') == std::string::npos)
-                        this->modes += "o";
-                    if (!limit_user && this->modes.find('l'))
-                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'l'), this->modes.end());
-                    if (!invite && this->modes.find('i'))
-                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'i'), this->modes.end());
-                    if (!topic && this->modes.find('t'))
-                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 't'), this->modes.end());
-                    if (password_channel.empty() && this->modes.find('k'))
-                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'k'), this->modes.end());
-                    if (!operators && this->modes.find('o'))
-                        this->modes.erase(std::remove(this->modes.begin(), this->modes.end(), 'o'), this->modes.end());
 					sendirc(client.clientSocket, ":" + client.servername + " 324 " + client.nickname + " " + server.channels[i].channelName + " " + modes);
                     return ;
                 }
                 if (youre_op(i, nickname, client) == -1) {
+                    sendirc(client.clientSocket, ":" + client.servername + " 482" + ERR_CHANOPRIVSNEEDED);
                     return ;
                 }
-                else 
-                    parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server, client, str[0]);   //str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
+                parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server, client, str[0]);   //str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
 			    return ;
             }
 		}

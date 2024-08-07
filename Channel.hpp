@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/05 13:44:20 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/07 19:48:46 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #include <algorithm>
 #include"Client.hpp"
 
-# define ERR_CHANOPRIVSNEEDED " :You're not channel operator" //482
 # define ERR_NEEDMOREPARAMS " :Not enough parameters"   //461
 # define ERR_NOTONCHANNEL " :You're not on that channel" //442
 # define ERR_NOSUCHNICK " :No such nick/channel" //401
@@ -39,9 +38,14 @@
 # define ERR_NICKNAMEINUSE " :Nickname is already in use" //433
 # define ERR_NORECIPIENT " :No recipient given (PRIVMSG)" //411
 # define ERR_NOTEXTTOSEND " :No text to send" //412
-# define ERR_PASSWDMISMATCH " :Password incorrect" //464
 # define ERR_UNKNOWNCOMMAND " :Unknown command" //421
 # define ERR_NICKCOLLISION " :Nickname collision KILL" //436
+# define  ERR_PASSWDMISMATCH " :Password incorrect" //464
+
+# define  ERR_CHANNELISFULL " :Cannot join channel (+l)" //471
+# define  ERR_INVITEONLYCHAN " :Cannot join channel (+i)" //473
+# define  ERR_BADCHANNELKEY " :Cannot join channel (+k)" //475
+# define ERR_CHANOPRIVSNEEDED " :You're not channel operator" //482
 
 class Client;
 class Server;

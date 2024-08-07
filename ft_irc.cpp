@@ -28,28 +28,22 @@ void    parse_argv(Server& server, char **argv)
     server.pass = argv[2];
     if (server.pass.empty())
 	{
-		std::cout << "ENTRY PASSEWORD" << std::endl;
+		std::cout << "ENTRY PASSWORD" << std::endl;
 		exit(1);
 	}
 }
 
 void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 {
-	std::cout << "clients nbr : " << clients.size() << std::endl;
 	for(unsigned long i = 0; i < clients.size() ;i++)
 	{
-		std::cout << "PASS" << std::endl;
 		if (clients[i].nickname != clientName)
-		{
-			std::cout << "PASS1" << std::endl;
 			sendirc(clients[i].clientSocket, ":" + clientName + " QUIT " + clientName);
-		}
 	}
 	for (std::vector<pollfd>::iterator it = fds.begin(); it != fds.end();)
 	{
 		if (it->fd == clientSocketcpy) 
 			{
-				std::cout << "5" << std::endl;
 				close(it->fd);
 				nfds--;
 				it = fds.erase(it);
@@ -62,10 +56,8 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 	{
 		for (std::vector<Client>::iterator it = channels[i].users.begin(); it != channels[i].users.end();)
 		{
-			if (it->nickname == clientName){
+			if (it->nickname == clientName)
 				it = channels[i].users.erase(it);
-				std::cout << "3" << std::endl;
-			}
 			else 
 				++it;
 		}
@@ -83,7 +75,6 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 	{
 		if (it->nickname == clientName){
 			it = clients.erase(it);
-				std::cout << "clients nbr after Quit : " << clients.size() << std::endl;
 			break;
 		}
 		else 
@@ -97,7 +88,7 @@ Server::Server(char **argv)
 	parse_argv(*this, argv);
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
-		std::cout << "coucou5" << std::endl;
+		std::cout << "coucou5" << std::endl; //a changer
 	nfds = 0;
 	pollfd tmp;
 	tmp.fd = serverSocket;
@@ -141,7 +132,6 @@ void	Server::routine()
 			{
 				clients.push_back(Client());
 				clients[nfds].clientSocket = accept(serverSocket, (struct sockaddr*)&clients[nfds].clientAddr, &clients[nfds].addr_len);
-				std::cout << "nfds :" << nfds << std::endl;
 				tmp.fd = clients[nfds].clientSocket;
 				tmp.events = POLL_OUT;
 				tmp.revents = 0;
