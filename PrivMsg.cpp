@@ -6,7 +6,7 @@
 /*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 13:03:28 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/06 13:16:35 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:15:22 by rgreiner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 		}
 		else
 		{
+			if (target[j] == nickname)
+				return ;
 			for (unsigned long i = 0; i < server.clients.size(); i++)
 			{
 				if (server.clients[i].nickname == target[j])
