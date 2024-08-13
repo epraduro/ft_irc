@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+         #
+#    By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/08 14:24:51 by rgreiner          #+#    #+#              #
-#    Updated: 2024/06/12 14:20:56 by epraduro         ###   ########.fr        #
+#    Updated: 2024/08/06 13:04:28 by rgreiner         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ SRCS    =	ft_irc.cpp \
 			Channel.cpp \
 			operation_channels.cpp \
 			channel_mode.cpp \
+			PrivMsg.cpp \
 
 OBJS    =   ${SRCS:.c=.o}
 RM      =   rm -f

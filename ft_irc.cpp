@@ -169,11 +169,18 @@ void	Server::routine()
 
 void controles(int sig)
 {
-	//free();
 	std::cout << std::endl;
-	std::cout << "Server is closing" << std::endl;
 	(void)sig;
-	close(server.serverSocket);
+	int i = server.clients.size();
+	while (i != 0)
+	{
+		if (close(server.clients[i].clientSocket) == - 1)
+			std::cerr << "Error closing server socket: " << server.clients[i].clientSocket << std::endl;
+		i--;
+	}
+	if (close(server.serverSocket) == -1)
+		std::cerr << "Error closing server socket: " << server.serverSocket << std::endl;
+	std::cout << "Server is closing" << std::endl;
 	exit(0);
 }
 
