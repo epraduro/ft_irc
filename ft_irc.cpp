@@ -136,7 +136,7 @@ void	Server::routine()
 				tmp.events = POLL_OUT;
 				tmp.revents = 0;
 				fds.push_back(tmp);
-				send(clients[nfds].clientSocket, "Coucou\n", 7, 0);
+				//send(clients[nfds].clientSocket, "Coucou\n", 7, 0);
 				nfds++;
 				fds[0].revents = 0;
 			}

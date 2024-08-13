@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/13 15:29:33 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:27:37 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,6 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 						sendirc(clientSocket, ":" + servername + " 473 : " + server.channels[i].channelName + ERR_INVITEONLYCHAN);
 						return ;
 					}
-					continue;
 				}
 				server.channels[i].users.push_back(*this);
 				joinChannel(*this, server.channels[i].channelName);

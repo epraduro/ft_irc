@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operation_channels.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/13 15:29:56 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 16:22:31 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,6 +279,7 @@ void Server::part_chan(Client &client, int arg, std::vector<std::string> buffer)
 		}
 		while (j != (server.channels[i].users.size()))
 		{
+			std::cout << server.channels[i].users[j].nickname << std::endl;
 			if (server.channels[i].users[j].nickname == client.nickname)
 				break ;
 			j++;

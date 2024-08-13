@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel_mode.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/08/13 15:23:34 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:24:20 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int Client::youre_invited(int i) {
         j++;
     }
     if (!l)
-        return (-1);	
+        return (-1);
     return (0);
 }
 
