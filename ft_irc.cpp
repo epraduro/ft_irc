@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_irc.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/13 17:35:55 by ogregoir          #+#    #+#             */
+/*   Updated: 2024/08/13 17:35:59 by ogregoir         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Client.hpp"
@@ -88,7 +98,7 @@ Server::Server(char **argv)
 	parse_argv(*this, argv);
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
-		std::cout << "coucou5" << std::endl; //a changer
+		std::cout << "failed to create the server" << std::endl;
 	nfds = 0;
 	pollfd tmp;
 	tmp.fd = serverSocket;

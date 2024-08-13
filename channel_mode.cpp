@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/08/13 17:24:20 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:38:33 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,10 +159,6 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
     }
 }
 
-
-/*
- *str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
-*/
 void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
     if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {

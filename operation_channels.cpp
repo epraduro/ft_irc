@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/13 16:22:31 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:32:41 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,14 +208,13 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 	}
 	if (server.channels[i].topic == 1)
 	{
-		// utiliser your_op a la place de la boucle de grace
 		while (j != (server.channels[i].op.size()))
 		{
 			if (server.channels[i].op[j] == client.nickname)
 				break ;
 			j++;
 		}
-		if (j == server.channels[i].op.size() && !tmp.empty())   //modifier a la place de server.channels.size()
+		if (j == server.channels[i].op.size() && !tmp.empty())
 		{
 			sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
 			return ;

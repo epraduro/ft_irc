@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 18:00:46 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/07 19:48:46 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:38:06 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
-#include"Client.hpp"
+#include "Client.hpp"
 
 # define ERR_NEEDMOREPARAMS " :Not enough parameters"   //461
 # define ERR_NOTONCHANNEL " :You're not on that channel" //442
@@ -49,6 +49,7 @@
 
 class Client;
 class Server;
+
 class Channel
 {
 	protected:

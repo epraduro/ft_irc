@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rgreiner <rgreiner@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/06/19 18:56:45 by rgreiner         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:37:02 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@
 
 class Channel;
 class Server;
+
 class Client
 {
 	protected:
 
 	public:
-		Client(/* args */);
+		Client();
 		~Client();
 		int							clientSocket;
 		int							isConnected;
@@ -61,8 +62,8 @@ class Client
         void	                    modifynickname(std::string str);
 };
 
-std::vector<std::string> split (const std::string &s, char delim);
-std::string trim(const std::string& str);
-void    sendirc(int clientSocket, const std::string& msg);
+std::vector<std::string> 	split (const std::string &s, char delim);
+std::string 				trim(const std::string& str);
+void    					sendirc(int clientSocket, const std::string& msg);
 
 #include "Channel.hpp"

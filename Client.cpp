@@ -6,12 +6,12 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/13 17:27:37 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:37:32 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Client.hpp"
-#include"Server.hpp"
+#include "Client.hpp"
+#include "Server.hpp"
 
 Client::Client()
 {
