@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/08/13 17:38:33 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 23:11:20 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void Channel::op_privilege(std::string nickname, Client &client, std::string com
     (void) client;
     if (mode_act == 1 && !nickname.empty()) {
 		op.push_back(nickname);
+        
 		operators++;
         this->modes += "o";
 	}

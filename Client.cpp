@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/13 17:37:32 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 22:57:47 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,33 @@ void    joinChannel(Client &client, const std::string& channel)
 	sendirc(client.clientSocket, join);
 }
 
+void	Client::list_client(Server &server, int i)
+{
+	std::string str;
+	unsigned long j = 0;
+	unsigned long k = 0;
+	
+	while(j != server.channels[i].users.size())
+	{
+		k = 0;
+		while (server.channels[i].op.size() != k)
+		{
+			if (server.channels[i].users[j].nickname == server.channels[i].op[k])
+				str += "@";
+			k++;
+		}
+		str += server.channels[i].users[j].nickname + " ";
+		j++;
+	}
+	std::cout << str << std::endl;
+	j = 0;
+	while(j != server.channels[i].users.size())
+	{
+		sendirc(server.channels[i].users[j].clientSocket, ":" + servername + " 353 " + server.channels[i].users[j].nickname + " = " + server.channels[i].channelName + " :" + str);
+		j++;
+	}
+}
+
 void	Client::createChannel(std::vector<std::string> str, std::vector<std::string> tmp)
 {
 	if (str.size() < 2)
@@ -221,6 +248,7 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 				server.channels[i].users.push_back(*this);
 				joinChannel(*this, server.channels[i].channelName);
 				server.topic_chan(tmp, *this, str.size(), str);
+				list_client(server, i);
 				return ;
 			}
 		}
@@ -232,6 +260,7 @@ void	Client::createChannel(std::vector<std::string> str, std::vector<std::string
 		{
 			joinChannel(*this, server.channels[i].channelName);
 			server.topic_chan(tmp, *this, str.size(), str);
+			list_client(server, i);
 		}	
 	}
 }

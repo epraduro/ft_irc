@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:41:58 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/13 17:37:02 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 19:44:23 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Client
 		socklen_t 					addr_len;
 		char 						buf[1];
 		std::string 				finalbuf;
+		void						list_client(Server &server, int i);
 		void    					connectClient(std::string buf, std::string password, Server &server);
 		void						createChannel(std::vector<std::string> str, std::vector<std::string> tmp);
 		void						verifPassword(std::vector<std::string> str, std::string password);

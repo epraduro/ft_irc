@@ -6,7 +6,7 @@
 /*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:35:55 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/13 17:35:59 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/13 19:21:04 by ogregoir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,13 @@ void	Server::quit_Server(std::string clientName, int clientSocketcpy)
 
 Server::Server(char **argv)
 {
+	int value;
 	pass = argv[2];
 	parse_argv(*this, argv);
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket == -1)
 		std::cout << "failed to create the server" << std::endl;
+	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &value, sizeof(int));
 	nfds = 0;
 	pollfd tmp;
 	tmp.fd = serverSocket;
@@ -181,13 +183,6 @@ void controles(int sig)
 {
 	std::cout << std::endl;
 	(void)sig;
-	int i = server.clients.size();
-	while (i != 0)
-	{
-		if (close(server.clients[i].clientSocket) == - 1)
-			std::cerr << "Error closing server socket: " << server.clients[i].clientSocket << std::endl;
-		i--;
-	}
 	if (close(server.serverSocket) == -1)
 		std::cerr << "Error closing server socket: " << server.serverSocket << std::endl;
 	std::cout << "Server is closing" << std::endl;
