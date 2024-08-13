@@ -6,26 +6,12 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 14:08:28 by epraduro          #+#    #+#             */
-/*   Updated: 2024/08/07 18:00:30 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:23:34 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include "Server.hpp"
-
-/*
-    TODO:
-
-        - modes modiafiable en dehors du channel
-
-        ERR_NEEDMOREPARAMS    : le client n'a pas fourni assez de paramètres (461 "<commande> :Not enough parameters")          
-        ERR_CHANOPRIVSNEEDED  : pour toute commande qui requiert d'etre op (482 "<canal> :You're not channel operator")
-        ERR_NOSUCHNICK : pseudonyme passé en paramètre à la commande n'est pas actuellement utilisé (401 "<pseudonyme> :No such nick/channel")
-        ERR_NOTONCHANNEL  : Renvoyé par le serveur quand un client essaie une commande affectant un canal dont il ne fait pas partie (442 "<canal> :You're not on that channel")       
-        ERR_KEYSET : Clé de canal déjà définie (467 "<canal> :Channel key already set")
-        ERR_UNKNOWNMODE  : Mode inconnu (472 "<caractère> :is unknown mode char to me")               
-        ERR_NOSUCHCHANNEL   :le nom de canal donné est invalide (403 "<nom de canal> :No such channel")
-*/
 
 void Channel::key_channel(std::string key, Client &client, std::string commande) {
     (void) client;
@@ -173,6 +159,10 @@ void Channel::parse_mode_arg(std::string str, std::string arg, Server &server, C
     }
 }
 
+
+/*
+ *str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
+*/
 void Channel::setMode(std::vector<std::string> str, Server &server, std::string nickname, Client &client) {
     if (server.channels.size() >= 1) {
 		for (int i = 0; !server.channels[i].channelName.empty(); i++) {
@@ -185,8 +175,9 @@ void Channel::setMode(std::vector<std::string> str, Server &server, std::string 
                     sendirc(client.clientSocket, ":" + client.servername + " 482" + ERR_CHANOPRIVSNEEDED);
                     return ;
                 }
-                parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server, client, str[0]);   //str.size() == 4 ? str[3] : "" --> si str.size() == 4 tu lui passes str[3] sinon tu lui passes ""
-			    return ;
+                parse_mode_arg(str[2], str.size() == 4 ? str[3] : "", server, client, str[0]);
+			    sendirc(client.clientSocket, ": 324 " + str[2] + " " + server.channels[i].channelName + " " + modes);
+                return ;
             }
 		}
 	}

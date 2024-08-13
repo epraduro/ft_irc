@@ -6,7 +6,7 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:22:15 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/05 13:45:57 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 14:48:02 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void    Server::topic_chan(std::vector<std::string> tmp, Client &client, int arg
 				break ;
 			j++;
 		}
-		if (j == server.channels[i].op.size())   //modifier a la place de server.channels.size()
+		if (j == server.channels[i].op.size() && !tmp.empty())   //modifier a la place de server.channels.size()
 		{
 			sendirc(client.clientSocket, ":" + client.servername + " 482 " + buffer[1] + ERR_CHANOPRIVSNEEDED);
 			return ;

@@ -6,14 +6,14 @@
 /*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/07 20:04:09 by epraduro         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:25:04 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"Client.hpp"
 #include"Server.hpp"
 
-Client::Client(/* args */)
+Client::Client()
 {
 	addr_len = sizeof(clientAddr);
 	finalbuf.resize(0);
@@ -296,7 +296,7 @@ void	Client::privateMessage(std::vector<std::string> str, std::vector<std::strin
 					}
 				if (sent == 0 && foundserver == 0 && i == server.channels.size() - 1)
 				{
-					sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel1");
+					sendirc(clientSocket, ":" + servername + " 401 " + nickname + " " + target[j] + " :No such nick/channel");
 					return ;
 				}
 			}
