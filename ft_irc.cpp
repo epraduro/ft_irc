@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_irc.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:35:55 by ogregoir          #+#    #+#             */
-/*   Updated: 2024/08/13 19:21:04 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:11:48 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,6 @@ void	Server::routine()
 				tmp.events = POLL_OUT;
 				tmp.revents = 0;
 				fds.push_back(tmp);
-				//send(clients[nfds].clientSocket, "Coucou\n", 7, 0);
 				nfds++;
 				fds[0].revents = 0;
 			}

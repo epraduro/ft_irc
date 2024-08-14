@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ogregoir <ogregoir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: epraduro <epraduro@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 16:44:44 by rgreiner          #+#    #+#             */
-/*   Updated: 2024/08/13 22:57:47 by ogregoir         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:12:20 by epraduro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,6 @@ void	Client::list_client(Server &server, int i)
 		str += server.channels[i].users[j].nickname + " ";
 		j++;
 	}
-	std::cout << str << std::endl;
 	j = 0;
 	while(j != server.channels[i].users.size())
 	{
